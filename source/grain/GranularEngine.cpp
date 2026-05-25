@@ -224,7 +224,8 @@ void GranularEngine::process(juce::AudioBuffer<float>& outputBuffer,
         // --- Scheduler ---
         if (--schedulerCountdown <= 0.0)
         {
-            spawnGrain(params, buffer, bufLen);
+            if (params.grainProbability >= 1.0f || rng.nextFloat() < params.grainProbability)
+                spawnGrain(params, buffer, bufLen);
             schedulerCountdown = computeInteronsetSamples(params);
         }
 
