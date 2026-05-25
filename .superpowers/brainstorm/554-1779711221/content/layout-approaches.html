@@ -1,0 +1,618 @@
+<h2>Layout Approach — Single-Screen Master View</h2>
+<p class="subtitle">All ~90 parameters visible at once. LFO routing panel on right. Pick the layout structure that feels right.</p>
+
+<style>
+  .vst {
+    font-family: 'Courier New', monospace;
+    background: #0c0c0c;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 10px;
+    color: #d0d0d0;
+    font-size: 10px;
+    line-height: 1.4;
+    margin: 0;
+    overflow: hidden;
+  }
+  .vst-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #141414;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 4px 8px;
+    margin: -10px -10px 8px -10px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  .vst-title { color: #fff; letter-spacing: 3px; }
+  .vst-random { background: #1a1a1a; border: 1px solid #555; color: #fff; padding: 2px 8px; font-size: 9px; letter-spacing: 1px; cursor: pointer; }
+  .section-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #1e1e1e;
+    padding-bottom: 2px;
+  }
+  .knob-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .knob { text-align: center; }
+  .knob-circle { width: 20px; height: 20px; background: #202020; border: 1px solid #444; border-radius: 50%; margin: 0 auto 2px; position: relative; }
+  .knob-circle::after { content: ''; position: absolute; width: 1px; height: 7px; background: #fff; top: 2px; left: 50%; transform: translateX(-50%); }
+  .knob-name { font-size: 7px; color: #888; white-space: nowrap; }
+  .dropdown { background: #141414; border: 1px solid #333; color: #aaa; padding: 1px 4px; font-size: 7px; width: 50px; }
+  .lfo-strip { background: #111; border: 1px solid #1e1e1e; padding: 4px; }
+  .lfo-title { color: #fff; font-size: 8px; letter-spacing: 1px; margin-bottom: 3px; }
+  .routing-line { display: flex; align-items: center; gap: 3px; font-size: 7px; color: #666; margin: 2px 0; }
+  .routing-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; flex-shrink: 0; }
+  .routing-target { color: #aaa; }
+  .toggle { background: #1a1a1a; border: 1px solid #555; color: #888; padding: 1px 5px; font-size: 7px; }
+  .toggle.on { border-color: #fff; color: #fff; }
+  .vst-band { display: flex; gap: 8px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #1a1a1a; }
+  .band-block { flex: 1; min-width: 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+</style>
+
+<div class="cards" style="flex-direction: column; gap: 20px;">
+
+  <!-- OPTION A: Horizontal Bands -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)" style="padding: 0; overflow: hidden;">
+    <div class="card-body" style="padding: 8px 12px 6px; background: #1a1a1a;">
+      <div class="letter" style="display:inline; margin-right:8px;">A</div>
+      <strong>Horizontal Bands</strong>
+      <p style="margin:2px 0 0; font-size:12px; color:#888;">Each synthesis section is a labeled horizontal band across the full width. Parameters flow left→right within each band. LFO routing panel pinned to the right edge. Closest to a high-density plugin like U-He Zebra or TAL-NoiseMaker.</p>
+    </div>
+    <div style="padding: 10px;">
+      <div class="vst" style="width: 100%;">
+        <div class="vst-header">
+          <span class="vst-title">GRANULATOR</span>
+          <span style="color:#666; font-size:8px;">24 GRAINS</span>
+          <button class="vst-random">⚄ RANDOMIZE</button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 1; min-width: 0;">
+            <!-- GRAIN band -->
+            <div class="vst-band">
+              <div class="band-block">
+                <div class="section-label">grain</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">SIZE</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">DENSITY</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">OVERLAP</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND SIZE</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND DENS</div></div>
+                </div>
+                <div style="display:flex; gap:4px;">
+                  <select class="dropdown"><option>Hann</option></select>
+                  <select class="dropdown"><option>Forward</option></select>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">playhead</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">POSITION</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">SPRAY</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">SCAN</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">LOOP ST</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">LOOP EN</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">SCRUB</div></div>
+                </div>
+                <div style="display:flex; gap:4px; align-items:center;">
+                  <select class="dropdown"><option>Sine</option></select>
+                  <button class="toggle on">FREEZE</button>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">pitch</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">SHIFT</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">DETUNE</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">FORMANT</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">GLIDE</div></div>
+                </div>
+                <div style="display:flex; gap:4px;">
+                  <select class="dropdown"><option>Doppler</option></select>
+                  <select class="dropdown"><option>Off</option></select>
+                </div>
+              </div>
+            </div>
+            <!-- AMP + SPACE + FILTER band -->
+            <div class="vst-band">
+              <div class="band-block">
+                <div class="section-label">amplitude</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">AMP</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">VEL</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">XFADE</div></div>
+                </div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">ATK</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">DEC</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">SUS</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">REL</div></div>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">space</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">PAN</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">PAN RND</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">WIDTH</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">VOICES</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">V.DETUNE</div></div>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">filter</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">CUTOFF</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RES</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">ENV</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">LFO</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">KEYTRK</div></div>
+                </div>
+                <select class="dropdown"><option>Low-Pass</option></select>
+              </div>
+            </div>
+            <!-- FX band -->
+            <div class="vst-band" style="border:none; margin:0; padding:0;">
+              <div class="band-block">
+                <div class="section-label">fx — waveshaper</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">DRIVE</div></div>
+                </div>
+                <select class="dropdown"><option>Tanh</option></select>
+              </div>
+              <div class="band-block">
+                <div class="section-label">fx — eq</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">100Hz</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">500Hz</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">2kHz</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">8kHz</div></div>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">fx — chorus</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">MIX</div></div>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">fx — delay</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">TIME</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">FDBK</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">MIX</div></div>
+                </div>
+              </div>
+              <div class="band-block">
+                <div class="section-label">fx — reverb</div>
+                <div class="knob-row">
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">ROOM</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">DAMP</div></div>
+                  <div class="knob"><div class="knob-circle"></div><div class="knob-name">MIX</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- RIGHT: LFO routing panel -->
+          <div style="width: 120px; flex-shrink: 0; background: #0e0e0e; border-left: 1px solid #1e1e1e; padding: 4px;">
+            <div class="section-label" style="color:#aaa;">lfo routing</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 1 — SINE 1.0Hz</div>
+                <div class="knob-row" style="margin:0 0 4px;">
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">PHASE</div></div>
+                </div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ CUTOFF</span><span style="color:#555; margin-left:auto;">0.4</span></div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ PAN</span><span style="color:#555; margin-left:auto;">0.2</span></div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 2 — TRI 0.3Hz</div>
+                <div class="knob-row" style="margin:0 0 4px;">
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">PHASE</div></div>
+                </div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ POSITION</span><span style="color:#555; margin-left:auto;">0.6</span></div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 3 — S&amp;H</div>
+                <div class="knob-row" style="margin:0 0 4px;">
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">PHASE</div></div>
+                </div>
+                <div style="color:#555; font-size:7px;">— no patch —</div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 4 — SAW↑</div>
+                <div class="knob-row" style="margin:0 0 4px;">
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">PHASE</div></div>
+                </div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ PITCH</span><span style="color:#555; margin-left:auto;">-0.3</span></div>
+              </div>
+            </div>
+            <div style="margin-top:8px; border-top:1px solid #1e1e1e; padding-top:6px;">
+              <div class="section-label">output</div>
+              <div class="knob-row">
+                <div class="knob"><div class="knob-circle"></div><div class="knob-name">VOL</div></div>
+                <div class="knob"><div class="knob-circle"></div><div class="knob-name">WET</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B: Column Grid -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)" style="padding: 0; overflow: hidden;">
+    <div class="card-body" style="padding: 8px 12px 6px; background: #1a1a1a;">
+      <div class="letter" style="display:inline; margin-right:8px;">B</div>
+      <strong>Column Grid</strong>
+      <p style="margin:2px 0 0; font-size:12px; color:#888;">Parameters grouped into 4 fixed columns: Grain/Playhead | Pitch/Amp/Space | Filter/Buffer | FX. LFO panel right. Think Serum or Vital — dense grid of related modules.</p>
+    </div>
+    <div style="padding: 10px;">
+      <div class="vst" style="width: 100%;">
+        <div class="vst-header">
+          <span class="vst-title">GRANULATOR</span>
+          <span style="color:#666; font-size:8px;">24 GRAINS</span>
+          <button class="vst-random">⚄ RANDOMIZE</button>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 110px; gap: 6px;">
+          <!-- Col 1: Grain + Playhead -->
+          <div>
+            <div class="section-label">grain</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SIZE</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DENSITY</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">OVERLAP</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">INTRONS</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND SZ</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND DN</div></div>
+            </div>
+            <div style="display:flex;gap:3px;">
+              <select class="dropdown" style="width:48px;"><option>Hann</option></select>
+              <select class="dropdown" style="width:48px;"><option>Fwd</option></select>
+            </div>
+            <div class="section-label" style="margin-top:6px;">playhead</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">POS</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SPRAY</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SCAN</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">L.ST</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">L.EN</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SCRUB</div></div>
+            </div>
+            <div style="display:flex;gap:3px;align-items:center;">
+              <select class="dropdown" style="width:60px;"><option>Sine</option></select>
+              <button class="toggle on" style="font-size:6px;">FRZ</button>
+            </div>
+          </div>
+          <!-- Col 2: Pitch + Amp -->
+          <div>
+            <div class="section-label">pitch</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SHIFT</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DETUNE</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RATE</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">FORMANT</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">GLIDE</div></div>
+            </div>
+            <div style="display:flex;gap:3px;">
+              <select class="dropdown" style="width:48px;"><option>Dplr</option></select>
+              <select class="dropdown" style="width:48px;"><option>Off</option></select>
+            </div>
+            <div class="section-label" style="margin-top:6px;">amplitude</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">AMP</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">VEL</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">ATK</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DEC</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SUS</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">REL</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">XFADE</div></div>
+            </div>
+          </div>
+          <!-- Col 3: Space + Filter + Buffer -->
+          <div>
+            <div class="section-label">space</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">PAN</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">P.RND</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">WIDTH</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">VOICES</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">V.DET</div></div>
+            </div>
+            <div class="section-label" style="margin-top:6px;">filter</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">CUT</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RES</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">ENV</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">LFO</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">KTRK</div></div>
+            </div>
+            <select class="dropdown"><option>Low-Pass</option></select>
+            <div class="section-label" style="margin-top:6px;">buffer</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">LEN</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">FDBK</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">GAIN</div></div>
+            </div>
+            <select class="dropdown"><option>Cont.</option></select>
+          </div>
+          <!-- Col 4: FX -->
+          <div>
+            <div class="section-label">fx — drive</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DRIVE</div></div>
+              <select class="dropdown" style="align-self:center;"><option>Tanh</option></select>
+            </div>
+            <div class="section-label" style="margin-top:4px;">fx — eq</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">100</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">500</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">2k</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">8k</div></div>
+            </div>
+            <div class="section-label" style="margin-top:4px;">chorus</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RATE</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DEPTH</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">MIX</div></div>
+            </div>
+            <div class="section-label" style="margin-top:4px;">delay</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">TIME</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">FDBK</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">MIX</div></div>
+            </div>
+            <div class="section-label" style="margin-top:4px;">reverb</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">ROOM</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DAMP</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">MIX</div></div>
+            </div>
+          </div>
+          <!-- Col 5: LFO routing -->
+          <div style="background: #0e0e0e; border-left: 1px solid #1e1e1e; padding: 4px;">
+            <div class="section-label" style="color:#aaa;">lfo</div>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 1 — SINE</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">RT</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">DP</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">PH</div></div>
+                </div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ CUTOFF ×0.4</span></div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ PAN ×0.2</span></div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 2 — TRI</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">RT</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">DP</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">PH</div></div>
+                </div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ POS ×0.6</span></div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 3 — S&amp;H</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">RT</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">DP</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">PH</div></div>
+                </div>
+                <div style="color:#555; font-size:7px;">— unpatched —</div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 4 — SAW↑</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">RT</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">DP</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:12px;height:12px;"></div><div class="knob-name">PH</div></div>
+                </div>
+                <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">→ PITCH ×-0.3</span></div>
+              </div>
+            </div>
+            <div style="margin-top:6px; border-top:1px solid #1e1e1e; padding-top:4px;">
+              <div class="section-label">out</div>
+              <div class="knob-row">
+                <div class="knob"><div class="knob-circle"></div><div class="knob-name">VOL</div></div>
+                <div class="knob"><div class="knob-circle"></div><div class="knob-name">WET</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C: Top Synthesis / Bottom Modulation -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)" style="padding: 0; overflow: hidden;">
+    <div class="card-body" style="padding: 8px 12px 6px; background: #1a1a1a;">
+      <div class="letter" style="display:inline; margin-right:8px;">C</div>
+      <strong>Top/Bottom Split</strong>
+      <p style="margin:2px 0 0; font-size:12px; color:#888;">Top half: all synthesis params (Grain, Playhead, Pitch, Amp, Space, Filter, Buffer) in dense rows. Bottom half: LFO routing panel full-width with waveform preview and patch list. FX as a right strip. Inspired by Kontakt's modulation zone.</p>
+    </div>
+    <div style="padding: 10px;">
+      <div class="vst" style="width: 100%;">
+        <div class="vst-header">
+          <span class="vst-title">GRANULATOR</span>
+          <span style="color:#666; font-size:8px;">24 GRAINS</span>
+          <button class="vst-random">⚄ RANDOMIZE</button>
+        </div>
+        <!-- Top: synth params in rows -->
+        <div style="display:flex; gap:6px; margin-bottom:6px; padding-bottom:6px; border-bottom:1px solid #222;">
+          <div style="flex:1; min-width:0;">
+            <div class="section-label">grain + playhead</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SIZE</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DENS</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">OVLP</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND SZ</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">RND DN</div></div>
+              <span style="border-left:1px solid #222; margin:0 4px;"></span>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">POS</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SPRAY</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SCAN</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">L.ST</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">L.EN</div></div>
+            </div>
+            <div style="display:flex;gap:4px;margin-top:2px;">
+              <select class="dropdown"><option>Hann</option></select>
+              <select class="dropdown"><option>Fwd</option></select>
+              <select class="dropdown"><option>Sine</option></select>
+              <button class="toggle on" style="font-size:7px;">FRZ</button>
+            </div>
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div class="section-label">pitch + amp + space</div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SHIFT</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DET</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">FORM</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">GLIDE</div></div>
+              <span style="border-left:1px solid #222; margin:0 4px;"></span>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">AMP</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">ATK</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">DEC</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">SUS</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">REL</div></div>
+              <span style="border-left:1px solid #222; margin:0 4px;"></span>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">PAN</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">WID</div></div>
+              <div class="knob"><div class="knob-circle"></div><div class="knob-name">VCES</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom: LFO zone full-width -->
+        <div style="display:flex; gap:6px;">
+          <div style="flex:1; background:#0e0e0e; padding:4px; border:1px solid #1a1a1a;">
+            <div class="section-label" style="color:#aaa;">modulation routing — lfo 1–4</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:6px;">
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 1 — SINE 1.0Hz</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">PHASE</div></div>
+                  <select class="dropdown" style="width:40px;align-self:center;"><option>Sine</option></select>
+                </div>
+                <div style="background:#111; padding:3px; font-size:7px; color:#888;">
+                  <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">CUTOFF</span><span style="color:#aaa; margin-left:auto;">×0.40</span></div>
+                  <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">PAN</span><span style="color:#aaa; margin-left:auto;">×0.20</span></div>
+                  <div style="color:#444; margin-top:3px; font-style:italic;">+ add routing…</div>
+                </div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 2 — TRI 0.3Hz</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">PHASE</div></div>
+                  <select class="dropdown" style="width:40px;align-self:center;"><option>Tri</option></select>
+                </div>
+                <div style="background:#111; padding:3px; font-size:7px; color:#888;">
+                  <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">POSITION</span><span style="color:#aaa; margin-left:auto;">×0.60</span></div>
+                  <div style="color:#444; margin-top:3px; font-style:italic;">+ add routing…</div>
+                </div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 3 — S&amp;H 4.2Hz</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">PHASE</div></div>
+                  <select class="dropdown" style="width:40px;align-self:center;"><option>S&H</option></select>
+                </div>
+                <div style="background:#111; padding:3px; font-size:7px; color:#555; font-style:italic;">
+                  — no routings —
+                </div>
+              </div>
+              <div class="lfo-strip">
+                <div class="lfo-title">LFO 4 — SAW↑ 0.1Hz</div>
+                <div class="knob-row" style="margin:2px 0;">
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">RATE</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">DEPTH</div></div>
+                  <div class="knob"><div class="knob-circle" style="width:16px;height:16px;"></div><div class="knob-name">PHASE</div></div>
+                  <select class="dropdown" style="width:40px;align-self:center;"><option>Saw↑</option></select>
+                </div>
+                <div style="background:#111; padding:3px; font-size:7px; color:#888;">
+                  <div class="routing-line"><div class="routing-dot"></div><span class="routing-target">PITCH</span><span style="color:#aaa; margin-left:auto;">×-0.30</span></div>
+                  <div style="color:#444; margin-top:3px; font-style:italic;">+ add routing…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- FX right strip -->
+          <div style="width:120px; flex-shrink:0; background:#0e0e0e; padding:4px; border:1px solid #1a1a1a;">
+            <div class="section-label">fx chain</div>
+            <div class="knob-row" style="margin-bottom:3px;">
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DRIVE</div></div>
+            </div>
+            <div class="knob-row" style="margin-bottom:3px;">
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">100</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">500</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">2k</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">8k</div></div>
+            </div>
+            <div class="knob-row" style="margin-bottom:3px;">
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">CHR.R</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">CHR.D</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">CHR.M</div></div>
+            </div>
+            <div class="knob-row" style="margin-bottom:3px;">
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DLY.T</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DLY.F</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">DLY.M</div></div>
+            </div>
+            <div class="knob-row">
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">REV.R</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">REV.D</div></div>
+              <div class="knob"><div class="knob-circle" style="width:14px;height:14px;"></div><div class="knob-name">REV.M</div></div>
+            </div>
+            <div style="margin-top:6px; border-top:1px solid #1e1e1e; padding-top:4px;">
+              <div class="knob-row">
+                <div class="knob"><div class="knob-circle"></div><div class="knob-name">VOL</div></div>
+                <div class="knob"><div class="knob-circle"></div><div class="knob-name">WET</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

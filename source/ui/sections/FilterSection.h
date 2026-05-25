@@ -1,0 +1,20 @@
+#pragma once
+#include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+#include "../components/KnobWithLabel.h"
+
+class FilterSection : public juce::Component
+{
+public:
+    explicit FilterSection(juce::AudioProcessorValueTreeState& apvts);
+    void resized() override;
+
+private:
+    KnobWithLabel cutoff, resonance, envDepth, lfoDepth, keytrack;
+    juce::ComboBox filterTypeBox;
+    juce::Label    filterTypeLabel;
+
+    juce::AudioProcessorValueTreeState::SliderAttachment
+        cutoffAtt, resAtt, envDepthAtt, lfoDepthAtt, keytrackAtt;
+    juce::AudioProcessorValueTreeState::ComboBoxAttachment typeAtt;
+};

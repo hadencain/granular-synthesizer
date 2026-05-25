@@ -1,0 +1,443 @@
+GRANULATOR SYNTH — COMPLETE ATTRIBUTE REFERENCE
+================================================
+For use as a build spec. Ranges are practical defaults; expand as needed.
+
+
+═══════════════════════════════
+GRAIN CORE
+═══════════════════════════════
+
+Grain Size
+  Range: 1ms – 500ms
+  Typical sweet spot: 20ms – 80ms
+  Notes: Sub-10ms = buzzy/pitched artifacts; 100ms+ = smooth blending
+
+Grain Density
+  Range: 1 – 500 grains/sec
+  Typical: 20 – 80 grains/sec
+  Notes: Low = choppy/rhythmic; high = smooth cloud texture
+
+Grain Envelope Shape
+  Options: Hann (default), Gaussian, Trapezoid, Rectangle, Triangular, Tukey, Custom
+  Notes: Hann minimizes spectral splatter; Rectangle = harsh edges; Tukey = flat top with smooth fade
+
+Grain Overlap
+  Range: 0% – 100%
+  Notes: 0% = gapped/stutter; 50%+ = dense wash; works in tandem with density
+
+Interonset Time
+  Range: 1ms – 1000ms
+  Notes: Time between successive grain triggers; inverse of density when regular
+
+Grain Direction
+  Options: Forward, Reverse, Bidirectional, Random
+  Notes: Random mixes forward/reverse grains — makes sources unrecognizable while preserving timbre
+
+Randomize Size
+  Range: 0ms – 250ms deviation from base grain size
+
+Randomize Density
+  Range: 0 – 200 grains/sec deviation from base density
+
+
+═══════════════════════════════
+PLAYHEAD / POSITION
+═══════════════════════════════
+
+Position
+  Range: 0% – 100% of buffer
+  Notes: Core creative control; maps well to a large knob or XY pad
+
+Scan / Spray (Position Randomization)
+  Range: 0ms – 500ms radius around current position
+  Notes: Small values = tight/focused; large = washed out and diffuse
+
+Scan Rate
+  Range: 0.001Hz – 10Hz (or synced to host)
+  Notes: Speed at which playhead moves across buffer automatically
+
+Scan Shape
+  Options: Forward, Reverse, Pendulum (ping-pong), Random walk, Sine
+  Notes: Pendulum is useful for smooth back-and-forth sweeps
+
+Loop Start
+  Range: 0% – 99% of buffer
+  Notes: Must be less than Loop End
+
+Loop End
+  Range: 1% – 100% of buffer
+  Notes: Narrow loop window = pitched tone; wide = texture
+
+Freeze
+  Options: On / Off (boolean)
+  Notes: Locks playhead position; grains still scatter via spray
+
+Scrub / Seek
+  Range: 0% – 100% of buffer (manual real-time control)
+  Notes: Best mapped to a touch strip, mod wheel, or expression pedal
+
+
+═══════════════════════════════
+PITCH / TRANSPOSITION
+═══════════════════════════════
+
+Pitch Shift
+  Range: -48 to +48 semitones
+  Default: 0 semitones
+  Notes: Applied per grain via playback rate modification
+
+Detune
+  Range: -100 to +100 cents
+  Default: 0 cents
+
+Pitch Randomization
+  Range: 0 – 24 semitones deviation per grain (bipolar)
+  Notes: Small values (1–2 st) = natural shimmer; large = atonal cloud
+
+Playback Rate
+  Range: 0.01x – 4.0x (multiplicative)
+  Default: 1.0x
+  Notes: Affects pitch AND time unless time-stretch is active; log scaling recommended
+
+Transpose Mode
+  Options: Doppler (rate-based), Interpolated (resampling), Phase vocoder
+  Notes: Doppler is simplest/cheapest; phase vocoder preserves time
+
+Pitch Quantize
+  Options: Off, Chromatic, Major, Minor, Custom scale
+  Notes: Snaps per-grain random pitch to nearest scale degree
+
+Formant Shift
+  Range: -12 to +12 semitones
+  Notes: Shifts resonant character independent of pitch; requires phase vocoder
+
+Glide / Portamento
+  Range: 0ms – 2000ms
+  Notes: Slides pitch between triggered notes
+
+
+═══════════════════════════════
+AMPLITUDE / VOLUME
+═══════════════════════════════
+
+Amplitude
+  Range: -inf to 0 dB (or 0.0 – 1.0 linear)
+  Default: 0 dB / 1.0
+
+Amplitude Randomization
+  Range: 0 – 18 dB deviation per grain (bipolar)
+  Notes: Adds organic variation to grain volume
+
+Envelope — Attack
+  Range: 0ms – 5000ms
+  Default: 10ms
+
+Envelope — Decay
+  Range: 0ms – 5000ms
+  Default: 100ms
+
+Envelope — Sustain
+  Range: 0.0 – 1.0
+  Default: 0.8
+
+Envelope — Release
+  Range: 0ms – 10000ms
+  Default: 500ms
+
+Velocity Sensitivity
+  Range: 0% – 100%
+  Notes: Scales amplitude output by incoming MIDI velocity
+
+Crossfade Time
+  Range: 0ms – 50ms
+  Notes: Smooth blend at grain edges; reduces clicks from abrupt grain endings
+
+
+═══════════════════════════════
+SPATIALIZATION
+═══════════════════════════════
+
+Pan
+  Range: -1.0 (full left) – +1.0 (full right)
+  Default: 0.0 (center)
+
+Pan Randomization
+  Range: 0.0 – 1.0 spread radius (bipolar per grain)
+  Notes: Each grain gets an independent random pan offset
+
+Width / Stereo Spread
+  Range: 0% – 200%
+  Default: 100%
+  Notes: Mid-side based; >100% exaggerates stereo field
+
+Voices / Unison
+  Range: 1 – 16
+  Default: 1
+  Notes: Each voice runs its own grain cloud
+
+Voice Detune Spread
+  Range: 0 – 100 cents total spread across voices
+  Notes: Distributed symmetrically (±spread/2) across voice count
+
+Spatial Mode
+  Options: Stereo, HRTF binaural, Ambisonics (if multichannel output supported)
+
+
+═══════════════════════════════
+MODULATION
+═══════════════════════════════
+
+LFO Rate
+  Range: 0.01Hz – 100Hz (or synced: 1/32 – 8 bars)
+  Notes: Per LFO instance; support at least 2–4 independent LFOs
+
+LFO Shape
+  Options: Sine, Triangle, Sawtooth up, Sawtooth down, Square, Sample & Hold, Smooth random
+
+LFO Depth
+  Range: 0.0 – 1.0 normalized; scales to target parameter range
+
+LFO Phase Offset
+  Range: 0° – 360°
+  Notes: Useful for voice detuning with per-voice phase offset
+
+Envelope Follower
+  Attack: 1ms – 500ms
+  Release: 1ms – 2000ms
+  Notes: Tracks input amplitude as a modulation source
+
+Modulation Matrix
+  Sources: LFO 1–4, Env 1–2, Velocity, Aftertouch, CC 1–127, Envelope follower, Random
+  Targets: Any modulatable parameter
+  Depth per slot: -1.0 – +1.0 (bipolar)
+
+Random / Chaos Modulator
+  Options: White noise, Sample & Hold, Brownian/Random walk, Perlin noise
+  Rate: 0.01Hz – 50Hz
+
+MIDI Mod Sources
+  Velocity: 0 – 127 mapped to 0.0 – 1.0
+  Mod wheel (CC1): 0 – 127
+  Aftertouch: 0 – 127
+  Pitchbend: -8192 – +8191 (default range ±2 semitones, configurable)
+  Assignable CCs: any CC 0–127
+
+
+═══════════════════════════════
+FILTER
+═══════════════════════════════
+
+Filter Type
+  Options: Low-pass, High-pass, Band-pass, Notch, Low-shelf, High-shelf, Peak/Bell, All-pass, Comb
+
+Cutoff Frequency
+  Range: 20Hz – 20000Hz
+  Default: 20000Hz (fully open)
+  Notes: Log scaling strongly recommended
+
+Resonance / Q
+  Range: 0.1 – 40 (Q factor) or 0 – 100%
+  Default: 0.707 (Butterworth, no resonance bump)
+  Notes: Values above ~8 will self-oscillate depending on filter model
+
+Filter Slope
+  Options: 6 dB/oct (1-pole), 12 dB/oct (2-pole), 24 dB/oct (4-pole), 48 dB/oct (8-pole)
+
+Cutoff Mod Depth (Envelope)
+  Range: -20000Hz – +20000Hz (bipolar)
+  Notes: Negative = filter closes on note-on
+
+Cutoff Mod Depth (LFO)
+  Range: 0 – 100% of cutoff range
+
+Keytracking
+  Range: 0% – 200%
+  Default: 0% (no tracking)
+  Notes: 100% = cutoff tracks pitch 1:1; useful for tonal grain textures
+
+Filter Per Grain
+  Options: Global (one filter for all grains) / Per-grain (individual filter per grain instance)
+  Notes: Per-grain is CPU-heavy but produces much more diffuse, organic character
+
+
+═══════════════════════════════
+BUFFER / SOURCE
+═══════════════════════════════
+
+Buffer Length
+  Range: 10ms – 60000ms (60 sec)
+  Default: 1000ms – 4000ms
+  Notes: Longer = more variation available; shorter = loopy/repetitive
+
+Record Input (Live Capture)
+  Options: Off, Continuous (ring buffer), One-shot, Gate-triggered
+  Notes: Continuous overwrites oldest audio; one-shot freezes on trigger
+
+Record Feedback
+  Range: 0% – 100% (output fed back into buffer)
+  Notes: >70% risks runaway feedback; useful for evolving textures
+
+File / Sample Load
+  Formats: WAV, AIFF, FLAC, MP3 (decoded to PCM on load)
+  Notes: Static source mode; grains scrub the loaded file
+
+Warp Mode
+  Options: None (Doppler), Granular time-stretch, Phase vocoder, Repitch
+  Notes: Affects how playback rate changes are handled
+
+Buffer Clear
+  Options: Manual trigger, On note-on, Never
+  Notes: Clearing resets live-recorded content
+
+Input Gain
+  Range: -24 dB – +24 dB
+  Default: 0 dB
+
+Onset Detection
+  Options: Off, Transient-snapping (snap position to nearest detected onset)
+  Sensitivity: 0% – 100%
+  Notes: Useful for rhythmic/percussive sources; prevents grains starting mid-transient
+
+
+═══════════════════════════════
+EFFECTS (per-grain and/or global)
+═══════════════════════════════
+
+Reverb Send
+  Dry/Wet: 0% – 100%
+  Room size: 0% – 100%
+  Decay: 0.1s – 60s
+  Damping: 0% – 100%
+
+Delay Send
+  Dry/Wet: 0% – 100%
+  Time: 1ms – 2000ms (or synced to host)
+  Feedback: 0% – 99%
+  Ping-pong: On / Off
+
+Distortion / Saturation
+  Type: Soft clip, Hard clip, Wavefold, Tanh, Tube
+  Drive: 0 – 100% (or 0 dB – +40 dB)
+
+Bit Crush
+  Bit depth: 1 – 24 bits
+  Sample rate reduction: 100Hz – 48000Hz
+
+Chorus / Flanger
+  Rate: 0.01Hz – 10Hz
+  Depth: 0ms – 20ms
+  Feedback: -99% – +99%
+
+Ring Modulation
+  Carrier frequency: 1Hz – 5000Hz
+  Mix: 0% – 100%
+
+Waveshaper
+  Options: Preset curves (fold, clip, asymmetric) or user-drawn table
+  Drive: 0 – 100%
+
+EQ Bands
+  Per band — Frequency: 20Hz – 20kHz, Gain: ±18 dB, Q: 0.1 – 10
+  Band count: 2–8 bands typical
+
+Limiter / Compressor
+  Threshold: -60 dB – 0 dB
+  Ratio: 1:1 – inf:1
+  Attack: 0.1ms – 100ms
+  Release: 1ms – 2000ms
+  Makeup gain: 0 dB – +30 dB
+
+
+═══════════════════════════════
+TIMING / SYNC
+═══════════════════════════════
+
+Tempo Sync
+  Options: Off (free Hz), On (synced to BPM)
+  BPM range if standalone: 20 – 300 BPM
+
+Grain Rate Division (when synced)
+  Options: 1/64, 1/32, 1/16, 1/8, 1/4, 1/2, 1/1 and triplet/dotted variants
+
+Trigger Mode
+  Options: Free-running, Gated (grains only while gate open), MIDI note trigger, External clock
+
+Retrigger
+  Options: On (resets grain cloud on each note-on), Off (continues running)
+
+Grain Scheduler Jitter
+  Range: 0ms – 100ms random deviation from scheduled trigger time
+  Notes: Adds humanization; prevents beating/phasing artifacts at regular densities
+
+Sync to Host Transport
+  Options: Off, On (follows DAW play/stop/BPM)
+
+
+═══════════════════════════════
+POLYPHONY / VOICE MANAGEMENT
+═══════════════════════════════
+
+Max Voices
+  Range: 1 – 32 (practical limit depends on CPU cost per voice)
+  Default: 8
+
+Voice Stealing Mode
+  Options: Oldest, Quietest, Lowest pitch, Highest pitch, None (hard limit)
+
+Unison Detune
+  Range: 0 – 100 cents total spread
+  Notes: Distributed symmetrically across voice count
+
+Chord Mode
+  Options: Off, Minor 3rd, Major 3rd, 5th, Octave, Custom interval set (semitones)
+
+Legato
+  Options: On / Off
+  Notes: On = envelope does not retrigger on held notes
+
+
+═══════════════════════════════
+OUTPUT
+═══════════════════════════════
+
+Master Volume
+  Range: -inf – +6 dB
+  Default: 0 dB
+
+Dry / Wet Mix
+  Range: 0% – 100%
+  Default: 100% wet (instrument use); 50% for insert/effect use
+
+Output Routing
+  Options: Stereo L/R, Multi-channel (up to 8 outputs), Sidechain send
+
+DC Offset Filter
+  Options: On / Off
+  Notes: Always recommended On; removes sub-Hz energy from grain accumulation
+
+Anti-Aliasing
+  Options: Off, Low (linear interpolation), High (sinc / 4x oversampling)
+  Notes: High quality increases CPU; important at extreme pitch ratios
+
+
+═══════════════════════════════
+BUILD NOTES
+═══════════════════════════════
+
+SCALING RECOMMENDATIONS
+  Log scaling:         Cutoff frequency, Grain size, Scan rate, LFO rate, Delay time
+  Linear scaling:      Pan, Mix levels, Envelope depths, Mod depths
+  Exponential scaling: Amplitude, Master volume (perceptual loudness)
+
+BEST CANDIDATES FOR PER-GRAIN RANDOMIZATION
+  Size, Pitch, Pan, Amplitude, Direction, Filter cutoff (if per-grain mode)
+
+CPU-HEAVIEST FEATURES (prioritize optimization here)
+  Per-grain filter mode
+  Phase vocoder transpose
+  High voice count (8+)
+  High density + long grains simultaneously
+  Multichannel HRTF spatialization
+
+MINIMUM VIABLE GRANULATOR (core loop to get running first)
+  Position, Size, Density, Spray, Pitch, Amplitude envelope, Pan spread, Grain shape
