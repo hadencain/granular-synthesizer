@@ -37,6 +37,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     layout.add(std::make_unique<PC>("grain_direction",   "Grain Direction",   juce::StringArray{"Forward","Reverse","Bidirectional","Random"}, 0));
     layout.add(std::make_unique<P>("randomize_size_ms",  "Randomize Size",    juce::NormalisableRange<float>(0.0f, 250.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
     layout.add(std::make_unique<P>("randomize_density",  "Randomize Density", juce::NormalisableRange<float>(0.0f, 200.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("/s")));
+    layout.add(std::make_unique<P>("grain_probability", "Grain Probability",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 1.0f));
 
     // --- Playhead ---
     layout.add(std::make_unique<P>("position",           "Position",          juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
@@ -177,6 +179,7 @@ void PluginProcessor::cacheRawParams()
     r->grainDirection   = apvts.getRawParameterValue("grain_direction");
     r->randomizeSizeMs  = apvts.getRawParameterValue("randomize_size_ms");
     r->randomizeDensity = apvts.getRawParameterValue("randomize_density");
+    r->grainProbability = apvts.getRawParameterValue("grain_probability");
 
     r->position         = apvts.getRawParameterValue("position");
     r->sprayMs          = apvts.getRawParameterValue("spray_ms");
@@ -312,6 +315,7 @@ GranularParams PluginProcessor::buildParamSnapshot()
     p.grainDirection    = static_cast<int>(r.grainDirection->load());
     p.randomizeSizeMs   = r.randomizeSizeMs->load();
     p.randomizeDensity  = r.randomizeDensity->load();
+    p.grainProbability  = r.grainProbability->load();
 
     p.position          = r.position->load();
     p.sprayMs           = r.sprayMs->load();

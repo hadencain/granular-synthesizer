@@ -62,6 +62,7 @@ public:
         std::atomic<float>* grainDirection    = nullptr;
         std::atomic<float>* randomizeSizeMs   = nullptr;
         std::atomic<float>* randomizeDensity  = nullptr;
+        std::atomic<float>* grainProbability  = nullptr;
         // Playhead
         std::atomic<float>* position          = nullptr;
         std::atomic<float>* sprayMs           = nullptr;

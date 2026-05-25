@@ -42,6 +42,7 @@ struct GranularParams
     int   grainDirection    = 0;        // GrainDirection cast
     float randomizeSizeMs   = 0.0f;
     float randomizeDensity  = 0.0f;
+    float grainProbability  = 1.0f;    // 0..1, chance a scheduled grain fires
 
     // Playhead
     float position          = 0.0f;    // 0..1
