@@ -56,6 +56,7 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     addAndMakeVisible(playBtn);
 
     waveformDisplay.setBuffer(&p.getGrainBuffer());
+    waveformDisplay.setAPVTS(&p.getAPVTS());
     addAndMakeVisible(waveformDisplay);
 
     addAndMakeVisible(grainSection);
@@ -123,6 +124,11 @@ void PluginEditor::timerCallback()
     const int n = processor.getSynth().getTotalActiveGrains();
     grainCountLabel.setText("grains  " + juce::String(n),
                              juce::dontSendNotification);
+
+    juce::Array<float> positions;
+    const int bufLen = static_cast<int>(processor.getGrainBuffer().getTotalLengthSamples());
+    processor.getSynth().collectGrainPositions(positions, bufLen);
+    waveformDisplay.setGrainPositions(positions);
 }
 
 void PluginEditor::mouseDown(const juce::MouseEvent& e)
