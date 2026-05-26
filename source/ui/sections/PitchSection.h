@@ -16,5 +16,5 @@ private:
 
     juce::AudioProcessorValueTreeState::SliderAttachment
         pitchAtt, detuneAtt, randAtt, rateAtt, formantAtt, glideAtt;
-    juce::AudioProcessorValueTreeState::ComboBoxAttachment transposeAtt, quantizeAtt;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> transposeAtt, quantizeAtt;
 };
