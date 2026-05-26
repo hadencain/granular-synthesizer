@@ -80,15 +80,15 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     dryWetLabel.setFont(juce::Font(9.0f, juce::Font::bold));
     dryWetLabel.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
 
-    addAndMakeVisible(masterVolSlider);
-    addAndMakeVisible(masterVolLabel);
-    addAndMakeVisible(dryWetSlider);
-    addAndMakeVisible(dryWetLabel);
-
     masterVolSlider.setTextValueSuffix(" dB");
     masterVolSlider.setNumDecimalPlacesToDisplay(1);
     dryWetSlider.setTextValueSuffix("%");
     dryWetSlider.setNumDecimalPlacesToDisplay(1);
+
+    addAndMakeVisible(masterVolSlider);
+    addAndMakeVisible(masterVolLabel);
+    addAndMakeVisible(dryWetSlider);
+    addAndMakeVisible(dryWetLabel);
 
     bufferSection.onLoadFile = [&](const juce::File& file) {
         p.getGrainBuffer().loadFile(file, p.getFormatManager());
