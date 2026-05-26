@@ -85,30 +85,15 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     addAndMakeVisible(dryWetSlider);
     addAndMakeVisible(dryWetLabel);
 
+    masterVolSlider.setTextValueSuffix(" dB");
+    masterVolSlider.setNumDecimalPlacesToDisplay(1);
+    dryWetSlider.setTextValueSuffix("%");
+    dryWetSlider.setNumDecimalPlacesToDisplay(1);
+
     bufferSection.onLoadFile = [&](const juce::File& file) {
         p.getGrainBuffer().loadFile(file, p.getFormatManager());
         waveformDisplay.loadFile(file);
     };
-
-    auto initHdr = [&](juce::Label& lbl, const char* text)
-    {
-        lbl.setText(text, juce::dontSendNotification);
-        lbl.setFont(juce::Font(9.0f, juce::Font::bold));
-        lbl.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
-        lbl.setJustificationType(juce::Justification::centredLeft);
-        addAndMakeVisible(lbl);
-    };
-
-    initHdr(grainHdr,    "GRAIN CORE");
-    initHdr(playheadHdr, "PLAYHEAD");
-    initHdr(pitchHdr,    "PITCH");
-    initHdr(ampHdr,      "AMPLITUDE");
-    initHdr(spatialHdr,  "SPATIAL");
-    initHdr(filterHdr,   "FILTER");
-    initHdr(bufferHdr,   "BUFFER");
-    initHdr(fxHdr,       "EFFECTS");
-    initHdr(recordHdr,   "RECORD");
-    initHdr(modHdr,      "MODULATION");
 
     startTimerHz(10);
 }
@@ -154,7 +139,16 @@ void PluginEditor::randomizeAllParams()
 
 void PluginEditor::paint(juce::Graphics& g)
 {
-    g.fillAll(GranularLookAndFeel::backgroundDark);
+    // Radial gradient background — subtle depth
+    {
+        juce::ColourGradient grad(juce::Colour(0xff101010),
+                                   kW * 0.5f, kH * 0.5f,
+                                   juce::Colour(0xff080808),
+                                   0.0f, 0.0f,
+                                   true);   // radial
+        g.setGradientFill(grad);
+        g.fillRect(0, 0, kW, kH);
+    }
 
     // Header bar
     g.setColour(GranularLookAndFeel::backgroundMid);
@@ -185,12 +179,40 @@ void PluginEditor::paint(juce::Graphics& g)
     // LFO footer divider
     g.drawHorizontalLine(kBodyY + kBodyH - kLfoFootH,
                          static_cast<float>(kMainW), static_cast<float>(kW));
+
+    // Section color bars — 2px left edge of each section
+    const int grainH  = static_cast<int>(kBodyH * 0.50f);
+    const int pitchH  = kBodyH / 2;
+    const int spaceH  = static_cast<int>(kBodyH * 0.28f);
+    const int filterH = static_cast<int>(kBodyH * 0.36f);
+    const int bufferH = kBodyH - spaceH - filterH;
+    const int fxH     = static_cast<int>(kBodyH * 0.65f);
+    const int recH    = kBodyH - fxH;
+
+    struct Bar { int x, y, h; juce::Colour colour; };
+    const Bar bars[] = {
+        { 0,         kBodyY,                       grainH,          juce::Colour(0xffb08040) }, // Grain Core
+        { 0,         kBodyY + grainH,              kBodyH - grainH, juce::Colour(0xff707870) }, // Playhead
+        { kColW,     kBodyY,                       pitchH,          juce::Colour(0xffd06030) }, // Pitch
+        { kColW,     kBodyY + pitchH,              kBodyH - pitchH, juce::Colour(0xffc05535) }, // Amplitude
+        { kColW * 2, kBodyY,                       spaceH,          juce::Colour(0xff4080b0) }, // Spatial
+        { kColW * 2, kBodyY + spaceH,              filterH,         juce::Colour(0xff30a0a0) }, // Filter
+        { kColW * 2, kBodyY + spaceH + filterH,    bufferH,         juce::Colour(0xff607060) }, // Buffer
+        { kColW * 3, kBodyY,                       fxH,             juce::Colour(0xff5060c0) }, // Effects
+        { kColW * 3, kBodyY + fxH,                 recH,            juce::Colour(0xffc03030) }, // Record
+        { kMainW,    kBodyY,                       kBodyH,          juce::Colour(0xff8050b8) }, // Modulation
+    };
+    for (const auto& bar : bars)
+    {
+        g.setColour(bar.colour);
+        g.fillRect(bar.x, bar.y, 2, bar.h);
+    }
 }
 
 void PluginEditor::resized()
 {
     const int pad  = 8;
-    constexpr int kSLH = 16;
+    constexpr int kSLH = 4;
 
     // Header
     titleLabel.setBounds(16, 0, 180, kHeaderH);
@@ -204,17 +226,13 @@ void PluginEditor::resized()
     // ── Column 1: Grain + Playhead ──────────────────────────────────────────
     const int c1x = 0;
     const int grainH = static_cast<int>(kBodyH * 0.50f);
-    grainHdr.setBounds       (c1x,        kBodyY,                  kColW,           kSLH);
     grainSection.setBounds   (c1x + pad,  kBodyY + kSLH,           kColW - pad * 2, grainH - kSLH - pad);
-    playheadHdr.setBounds    (c1x,        kBodyY + grainH,         kColW,           kSLH);
     playheadSection.setBounds(c1x + pad,  kBodyY + grainH + kSLH, kColW - pad * 2, kBodyH - grainH - kSLH - pad);
 
     // ── Column 2: Pitch + Amplitude ─────────────────────────────────────────
     const int c2x = kColW;
     const int pitchH = kBodyH / 2;
-    pitchHdr.setBounds  (c2x,        kBodyY,                 kColW,           kSLH);
     pitchSection.setBounds(c2x + pad, kBodyY + kSLH,         kColW - pad * 2, pitchH - kSLH - pad);
-    ampHdr.setBounds    (c2x,        kBodyY + pitchH,        kColW,           kSLH);
     ampSection.setBounds(c2x + pad,  kBodyY + pitchH + kSLH, kColW - pad * 2, kBodyH - pitchH - kSLH - pad);
 
     // ── Column 3: Space + Filter + Buffer ───────────────────────────────────
@@ -222,26 +240,20 @@ void PluginEditor::resized()
     const int spaceH   = static_cast<int>(kBodyH * 0.28f);
     const int filterH  = static_cast<int>(kBodyH * 0.36f);
     const int bufferH  = kBodyH - spaceH - filterH;
-    spatialHdr.setBounds (c3x,        kBodyY,                             kColW,           kSLH);
     spatialSection.setBounds(c3x + pad, kBodyY + kSLH,                   kColW - pad * 2, spaceH - kSLH - pad);
-    filterHdr.setBounds  (c3x,        kBodyY + spaceH,                   kColW,           kSLH);
     filterSection.setBounds(c3x + pad, kBodyY + spaceH + kSLH,           kColW - pad * 2, filterH - kSLH - pad);
-    bufferHdr.setBounds  (c3x,        kBodyY + spaceH + filterH,         kColW,           kSLH);
     bufferSection.setBounds(c3x + pad, kBodyY + spaceH + filterH + kSLH, kColW - pad * 2, bufferH - kSLH - pad);
 
     // ── Column 4: FX + Record ───────────────────────────────────────────────
     const int c4x   = kColW * 3;
     const int fxH   = static_cast<int>(kBodyH * 0.65f);
     const int recH  = kBodyH - fxH;
-    fxHdr.setBounds    (c4x,        kBodyY,              kColW,           kSLH);
     fxSection.setBounds(c4x + pad,  kBodyY + kSLH,      kColW - pad * 2, fxH - kSLH - pad);
-    recordHdr.setBounds(c4x,        kBodyY + fxH,        kColW,           kSLH);
     recordSection.setBounds(c4x + pad, kBodyY + fxH + kSLH, kColW - pad * 2, recH - kSLH - pad);
 
     // ── Column 5: Mod (LFO strips) + output footer ──────────────────────────
     const int modH  = kBodyH - kLfoFootH;
     const int footY = kBodyY + modH;
-    modHdr.setBounds    (kMainW,       kBodyY,         kLfoColW,          kSLH);
     modSection.setBounds(kMainW + pad, kBodyY + kSLH, kLfoColW - pad * 2, modH - kSLH - pad);
 
     // VOL + WET side by side in LFO footer
