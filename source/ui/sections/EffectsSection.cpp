@@ -41,6 +41,44 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
     limiterRelease.setLabel("Rel");  att(limiterRelease,"fx_limiter_release");
     pingPongAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, "fx_delay_pingpong", pingPongBtn);
 
+    drive.getSlider().setTextValueSuffix(" dB");
+    drive.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        eq[i].freq.getSlider().setTextValueSuffix(" Hz");
+        eq[i].freq.getSlider().setNumDecimalPlacesToDisplay(0);
+        eq[i].gain.getSlider().setTextValueSuffix(" dB");
+        eq[i].gain.getSlider().setNumDecimalPlacesToDisplay(1);
+        eq[i].q.getSlider().setNumDecimalPlacesToDisplay(2);   // no suffix for Q
+    }
+
+    chorusRate.getSlider().setTextValueSuffix(" Hz");
+    chorusRate.getSlider().setNumDecimalPlacesToDisplay(2);
+    chorusDepth.getSlider().setTextValueSuffix("%");
+    chorusDepth.getSlider().setNumDecimalPlacesToDisplay(1);
+    chorusMix.getSlider().setTextValueSuffix("%");
+    chorusMix.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    delayTime.getSlider().setTextValueSuffix(" ms");
+    delayTime.getSlider().setNumDecimalPlacesToDisplay(0);
+    delayFeedback.getSlider().setTextValueSuffix("%");
+    delayFeedback.getSlider().setNumDecimalPlacesToDisplay(1);
+    delayMix.getSlider().setTextValueSuffix("%");
+    delayMix.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    reverbRoom.getSlider().setTextValueSuffix("%");
+    reverbRoom.getSlider().setNumDecimalPlacesToDisplay(1);
+    reverbDamp.getSlider().setTextValueSuffix("%");
+    reverbDamp.getSlider().setNumDecimalPlacesToDisplay(1);
+    reverbMix.getSlider().setTextValueSuffix("%");
+    reverbMix.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    limiterThresh.getSlider().setTextValueSuffix(" dB");
+    limiterThresh.getSlider().setNumDecimalPlacesToDisplay(1);
+    limiterRelease.getSlider().setTextValueSuffix(" ms");
+    limiterRelease.getSlider().setNumDecimalPlacesToDisplay(0);
+
     addAndMakeVisible(drive);
     addAndMakeVisible(wsTypeBox); addAndMakeVisible(wsLabel);
     for (auto& band : eq) { addAndMakeVisible(band.freq); addAndMakeVisible(band.gain); addAndMakeVisible(band.q); }
