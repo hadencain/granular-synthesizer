@@ -16,5 +16,5 @@ private:
 
     juce::AudioProcessorValueTreeState::SliderAttachment
         cutoffAtt, resAtt, envDepthAtt, lfoDepthAtt, keytrackAtt;
-    juce::AudioProcessorValueTreeState::ComboBoxAttachment typeAtt;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> typeAtt;
 };
