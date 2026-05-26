@@ -176,7 +176,7 @@ void PluginEditor::resized()
 
     // ── Column 1: Grain + Playhead ──────────────────────────────────────────
     const int c1x = 0;
-    const int grainH = static_cast<int>(kBodyH * 0.55f);
+    const int grainH = static_cast<int>(kBodyH * 0.50f);
     grainSection.setBounds   (c1x + pad, kBodyY + pad, kColW - pad * 2, grainH - pad);
     playheadSection.setBounds(c1x + pad, kBodyY + grainH, kColW - pad * 2, kBodyH - grainH - pad);
 
