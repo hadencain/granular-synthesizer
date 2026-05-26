@@ -19,6 +19,7 @@ public:
                  const GrainBuffer& buffer);
 
     int getActiveGrainCount() const noexcept;
+    void collectGrainPositions(juce::Array<float>& out, int bufferLengthSamples) const noexcept;
 
     // Resets playhead position (e.g. on note retrigger)
     void resetPlayhead() noexcept;

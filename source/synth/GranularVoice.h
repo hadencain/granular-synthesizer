@@ -31,6 +31,10 @@ public:
                          int startSample, int numSamples) override;
 
     int getActiveGrainCount() const noexcept { return engine.getActiveGrainCount(); }
+    void collectGrainPositions(juce::Array<float>& out, int bufferLengthSamples) const noexcept
+    {
+        engine.collectGrainPositions(out, bufferLengthSamples);
+    }
     float getVoiceDetuneOffset() const noexcept { return voiceDetuneOffsetCents; }
     void  setVoiceDetuneOffset(float cents) noexcept { voiceDetuneOffsetCents = cents; }
 

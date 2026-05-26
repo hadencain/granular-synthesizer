@@ -89,6 +89,26 @@ PluginEditor::PluginEditor(PluginProcessor& p)
         waveformDisplay.loadFile(file);
     };
 
+    auto initHdr = [&](juce::Label& lbl, const char* text)
+    {
+        lbl.setText(text, juce::dontSendNotification);
+        lbl.setFont(juce::Font(9.0f, juce::Font::bold));
+        lbl.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
+        lbl.setJustificationType(juce::Justification::centredLeft);
+        addAndMakeVisible(lbl);
+    };
+
+    initHdr(grainHdr,    "GRAIN CORE");
+    initHdr(playheadHdr, "PLAYHEAD");
+    initHdr(pitchHdr,    "PITCH");
+    initHdr(ampHdr,      "AMPLITUDE");
+    initHdr(spatialHdr,  "SPATIAL");
+    initHdr(filterHdr,   "FILTER");
+    initHdr(bufferHdr,   "BUFFER");
+    initHdr(fxHdr,       "EFFECTS");
+    initHdr(recordHdr,   "RECORD");
+    initHdr(modHdr,      "MODULATION");
+
     startTimerHz(10);
 }
 
@@ -163,7 +183,8 @@ void PluginEditor::paint(juce::Graphics& g)
 
 void PluginEditor::resized()
 {
-    const int pad = 8;
+    const int pad  = 8;
+    constexpr int kSLH = 16;
 
     // Header
     titleLabel.setBounds(16, 0, 180, kHeaderH);
@@ -177,42 +198,52 @@ void PluginEditor::resized()
     // ── Column 1: Grain + Playhead ──────────────────────────────────────────
     const int c1x = 0;
     const int grainH = static_cast<int>(kBodyH * 0.50f);
-    grainSection.setBounds   (c1x + pad, kBodyY + pad, kColW - pad * 2, grainH - pad);
-    playheadSection.setBounds(c1x + pad, kBodyY + grainH, kColW - pad * 2, kBodyH - grainH - pad);
+    grainHdr.setBounds       (c1x,        kBodyY,                  kColW,           kSLH);
+    grainSection.setBounds   (c1x + pad,  kBodyY + kSLH,           kColW - pad * 2, grainH - kSLH - pad);
+    playheadHdr.setBounds    (c1x,        kBodyY + grainH,         kColW,           kSLH);
+    playheadSection.setBounds(c1x + pad,  kBodyY + grainH + kSLH, kColW - pad * 2, kBodyH - grainH - kSLH - pad);
 
     // ── Column 2: Pitch + Amplitude ─────────────────────────────────────────
     const int c2x = kColW;
     const int pitchH = kBodyH / 2;
-    pitchSection.setBounds(c2x + pad, kBodyY + pad, kColW - pad * 2, pitchH - pad);
-    ampSection.setBounds  (c2x + pad, kBodyY + pitchH, kColW - pad * 2, kBodyH - pitchH - pad);
+    pitchHdr.setBounds  (c2x,        kBodyY,                 kColW,           kSLH);
+    pitchSection.setBounds(c2x + pad, kBodyY + kSLH,         kColW - pad * 2, pitchH - kSLH - pad);
+    ampHdr.setBounds    (c2x,        kBodyY + pitchH,        kColW,           kSLH);
+    ampSection.setBounds(c2x + pad,  kBodyY + pitchH + kSLH, kColW - pad * 2, kBodyH - pitchH - kSLH - pad);
 
     // ── Column 3: Space + Filter + Buffer ───────────────────────────────────
     const int c3x      = kColW * 2;
     const int spaceH   = static_cast<int>(kBodyH * 0.28f);
     const int filterH  = static_cast<int>(kBodyH * 0.36f);
     const int bufferH  = kBodyH - spaceH - filterH;
-    spatialSection.setBounds(c3x + pad, kBodyY + pad,              kColW - pad * 2, spaceH - pad);
-    filterSection.setBounds (c3x + pad, kBodyY + spaceH,           kColW - pad * 2, filterH - pad);
-    bufferSection.setBounds (c3x + pad, kBodyY + spaceH + filterH, kColW - pad * 2, bufferH - pad);
+    spatialHdr.setBounds (c3x,        kBodyY,                             kColW,           kSLH);
+    spatialSection.setBounds(c3x + pad, kBodyY + kSLH,                   kColW - pad * 2, spaceH - kSLH - pad);
+    filterHdr.setBounds  (c3x,        kBodyY + spaceH,                   kColW,           kSLH);
+    filterSection.setBounds(c3x + pad, kBodyY + spaceH + kSLH,           kColW - pad * 2, filterH - kSLH - pad);
+    bufferHdr.setBounds  (c3x,        kBodyY + spaceH + filterH,         kColW,           kSLH);
+    bufferSection.setBounds(c3x + pad, kBodyY + spaceH + filterH + kSLH, kColW - pad * 2, bufferH - kSLH - pad);
 
     // ── Column 4: FX + Record ───────────────────────────────────────────────
     const int c4x   = kColW * 3;
     const int fxH   = static_cast<int>(kBodyH * 0.65f);
     const int recH  = kBodyH - fxH;
-    fxSection.setBounds    (c4x + pad, kBodyY + pad, kColW - pad * 2, fxH - pad);
-    recordSection.setBounds(c4x + pad, kBodyY + fxH, kColW - pad * 2, recH - pad);
+    fxHdr.setBounds    (c4x,        kBodyY,              kColW,           kSLH);
+    fxSection.setBounds(c4x + pad,  kBodyY + kSLH,      kColW - pad * 2, fxH - kSLH - pad);
+    recordHdr.setBounds(c4x,        kBodyY + fxH,        kColW,           kSLH);
+    recordSection.setBounds(c4x + pad, kBodyY + fxH + kSLH, kColW - pad * 2, recH - kSLH - pad);
 
     // ── Column 5: Mod (LFO strips) + output footer ──────────────────────────
-    const int modH    = kBodyH - kLfoFootH;
-    const int footY   = kBodyY + modH;
-    modSection.setBounds(kMainW + pad, kBodyY, kLfoColW - pad * 2, modH - pad);
+    const int modH  = kBodyH - kLfoFootH;
+    const int footY = kBodyY + modH;
+    modHdr.setBounds    (kMainW,       kBodyY,         kLfoColW,          kSLH);
+    modSection.setBounds(kMainW + pad, kBodyY + kSLH, kLfoColW - pad * 2, modH - kSLH - pad);
 
     // VOL + WET side by side in LFO footer
-    const int knobW   = (kLfoColW - pad * 3) / 2;
-    const int lblH    = 12;
-    const int knobSz  = kLfoFootH - lblH - pad;
-    masterVolLabel.setBounds(kMainW + pad,           footY + pad, knobW, lblH);
-    masterVolSlider.setBounds(kMainW + pad,          footY + pad + lblH, knobW, knobSz);
-    dryWetLabel.setBounds(kMainW + pad * 2 + knobW, footY + pad, knobW, lblH);
-    dryWetSlider.setBounds(kMainW + pad * 2 + knobW, footY + pad + lblH, knobW, knobSz);
+    const int knobW = (kLfoColW - pad * 3) / 2;
+    const int lblH  = 12;
+    const int knobSz = kLfoFootH - lblH - pad;
+    masterVolLabel.setBounds (kMainW + pad,            footY + pad,        knobW, lblH);
+    masterVolSlider.setBounds(kMainW + pad,            footY + pad + lblH, knobW, knobSz);
+    dryWetLabel.setBounds    (kMainW + pad * 2 + knobW, footY + pad,       knobW, lblH);
+    dryWetSlider.setBounds   (kMainW + pad * 2 + knobW, footY + pad + lblH, knobW, knobSz);
 }

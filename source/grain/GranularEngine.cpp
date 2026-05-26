@@ -33,6 +33,19 @@ int GranularEngine::getActiveGrainCount() const noexcept
     return count;
 }
 
+void GranularEngine::collectGrainPositions(juce::Array<float>& out, int bufferLengthSamples) const noexcept
+{
+    if (bufferLengthSamples <= 0) return;
+    for (const auto& g : grainPool)
+    {
+        if (g.active)
+        {
+            const float pos = static_cast<float>(g.readPosition) / static_cast<float>(bufferLengthSamples);
+            out.add(juce::jlimit(0.0f, 1.0f, pos));
+        }
+    }
+}
+
 Grain* GranularEngine::allocateGrain() noexcept
 {
     // Round-robin: skip active grains up to one full cycle

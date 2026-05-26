@@ -14,6 +14,7 @@ public:
     void prepare(const juce::dsp::ProcessSpec& spec, GrainBuffer* sharedBuffer);
     void updateParams(const GranularParams& params);
     int  getTotalActiveGrains() const noexcept;
+    void collectGrainPositions(juce::Array<float>& out, int bufferLengthSamples) const noexcept;
 
 private:
     void distributeDetuneOffsets(int numVoices, float totalSpreadCents);

@@ -65,3 +65,10 @@ int GranularSynth::getTotalActiveGrains() const noexcept
             total += v->getActiveGrainCount();
     return total;
 }
+
+void GranularSynth::collectGrainPositions(juce::Array<float>& out, int bufferLengthSamples) const noexcept
+{
+    for (int i = 0; i < getNumVoices(); ++i)
+        if (const auto* v = dynamic_cast<const GranularVoice*>(getVoice(i)))
+            v->collectGrainPositions(out, bufferLengthSamples);
+}

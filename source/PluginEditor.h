@@ -59,5 +59,10 @@ private:
 
     juce::AudioProcessorValueTreeState::SliderAttachment masterVolAtt, dryWetAtt;
 
+    // Section header labels
+    juce::Label grainHdr, playheadHdr, pitchHdr, ampHdr,
+                spatialHdr, filterHdr, bufferHdr, fxHdr,
+                recordHdr, modHdr;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };
