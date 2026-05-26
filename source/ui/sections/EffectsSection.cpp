@@ -9,6 +9,7 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
 
     drive.setLabel("Drive");         att(drive, "fx_drive");
     wsLabel.setText("WS Type", juce::dontSendNotification);
+    wsTypeBox.addItemList({"Tanh", "Soft Clip"}, 1);
     wsTypeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, "fx_ws_type", wsTypeBox);
 
     const juce::String eqNames[][3] = {
@@ -53,37 +54,50 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
 
 void EffectsSection::resized()
 {
-    const int kW = 60, kH = 74, gap = 6;
-    const int row1Y = 4, row2Y = row1Y + kH + gap, row3Y = row2Y + kH + gap, row4Y = row3Y + kH + gap;
+    const int kW = 60, kH = 68, gap = 6, startX = 6;
+    int y = 4;
 
-    // Row 1: Drive + wsType + EQ bands
-    int x = gap;
-    drive.setBounds(x, row1Y, kW, kH); x += kW + gap;
-    wsLabel.setBounds(x, row1Y, 70, 14);
-    wsTypeBox.setBounds(x, row1Y + 16, 80, 20); x += 90;
-    for (auto& band : eq)
+    // Row 0: Drive + WS type
+    drive.setBounds(startX, y, kW, kH);
+    wsLabel.setBounds(startX + kW + gap, y, 80, 14);
+    wsTypeBox.setBounds(startX + kW + gap, y + 16, 100, 22);
+    y += kH + gap;
+
+    // EQ bands — 2 per row (each band: freq + gain + q)
+    // Row 1: bands 0,1  Row 2: bands 2,3
+    for (int row = 0; row < 2; ++row)
     {
-        band.freq.setBounds(x, row1Y, kW, kH); x += kW + 2;
-        band.gain.setBounds(x, row1Y, kW, kH); x += kW + 2;
-        band.q.setBounds   (x, row1Y, kW, kH); x += kW + gap;
+        int x = startX;
+        for (int b = row * 2; b < row * 2 + 2; ++b)
+        {
+            eq[b].freq.setBounds(x, y, kW, kH); x += kW + 2;
+            eq[b].gain.setBounds(x, y, kW, kH); x += kW + 2;
+            eq[b].q.setBounds   (x, y, kW, kH); x += kW + gap + 4;
+        }
+        y += kH + gap;
     }
 
-    // Row 2: Chorus
-    x = gap;
+    // Chorus
+    int x = startX;
     for (auto* c : { &chorusRate, &chorusDepth, &chorusMix })
-    { c->setBounds(x, row2Y, kW, kH); x += kW + gap; }
+    { c->setBounds(x, y, kW, kH); x += kW + gap; }
+    y += kH + gap;
 
-    // Row 3: Delay
-    x = gap;
+    // Delay
+    x = startX;
     for (auto* c : { &delayTime, &delayFeedback, &delayMix })
-    { c->setBounds(x, row3Y, kW, kH); x += kW + gap; }
-    pingPongBtn.setBounds(x, row3Y + kH / 2 - 12, 80, 24);
+    { c->setBounds(x, y, kW, kH); x += kW + gap; }
+    pingPongBtn.setBounds(x, y + kH / 2 - 12, 80, 24);
+    y += kH + gap;
 
-    // Row 4: Reverb + Limiter
-    x = gap;
+    // Reverb
+    x = startX;
     for (auto* c : { &reverbRoom, &reverbDamp, &reverbMix })
-    { c->setBounds(x, row4Y, kW, kH); x += kW + gap; }
-    x += gap * 2;
+    { c->setBounds(x, y, kW, kH); x += kW + gap; }
+    y += kH + gap;
+
+    // Limiter
+    x = startX;
     for (auto* c : { &limiterThresh, &limiterRelease })
-    { c->setBounds(x, row4Y, kW, kH); x += kW + gap; }
+    { c->setBounds(x, y, kW, kH); x += kW + gap; }
 }
