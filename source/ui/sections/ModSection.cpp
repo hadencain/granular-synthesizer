@@ -130,11 +130,12 @@ void ModSection::resized()
     const int sectionLblH = 16;
     const int gap       = 6;
 
-    const int totalH =
-        sectionLblH + 4 * (stripH + gap) +
-        sectionLblH + 2 * (envH  + gap) +
-        sectionLblH + followerH + gap +
-        sectionLblH + matrixH + gap;
+    const int lblStep = sectionLblH + 2;
+    const int totalH = 4 +
+        lblStep + 4 * (stripH + gap) +
+        lblStep + 2 * (envH   + gap) +
+        lblStep + followerH + gap +
+        lblStep + matrixH + gap;
 
     contentComp.setBounds(0, 0, getWidth(), totalH);
 
