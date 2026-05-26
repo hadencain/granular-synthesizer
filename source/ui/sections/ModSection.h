@@ -24,6 +24,30 @@ private:
         std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> shapeAtt;
     };
 
-    std::array<std::unique_ptr<LFOStrip>, 4> lfoStrips;
-    ModMatrixGrid modGrid;
+    struct EnvModStrip : public juce::Component
+    {
+        explicit EnvModStrip(juce::AudioProcessorValueTreeState& apvts, int n);
+        void resized() override;
+
+        KnobWithLabel attack, decay, sustain, release;
+        juce::Label   label;
+
+        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
+            atkAtt, decAtt, susAtt, relAtt;
+    };
+
+    std::array<std::unique_ptr<LFOStrip>, 4>    lfoStrips;
+    std::array<std::unique_ptr<EnvModStrip>, 2>  envStrips;
+
+    // Envelope Follower (inline — only 2 knobs)
+    KnobWithLabel efAttack, efRelease;
+    juce::Label   efLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> efAtkAtt, efRelAtt;
+
+    // Section labels
+    juce::Label lfoSectionLabel, envSectionLabel, followerSectionLabel, matrixSectionLabel;
+
+    ModMatrixGrid        modGrid;
+    juce::Component      contentComp;   // scrollable content host
+    juce::Viewport       viewport;
 };
