@@ -23,13 +23,12 @@ ModSection::LFOStrip::LFOStrip(juce::AudioProcessorValueTreeState& apvts, int n)
     shapeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         apvts, "lfo" + ns + "_shape", shapeBox);
 
-    depth.getSlider().onValueChange = [this] { repaint(); };
-
     addAndMakeVisible(label);
     addAndMakeVisible(shapeLabel);
     addAndMakeVisible(shapeBox);
     addAndMakeVisible(rate);
     addAndMakeVisible(depth);
+    depth.getSlider().onValueChange = [this] { repaint(); };
     addAndMakeVisible(phase);
 }
 
