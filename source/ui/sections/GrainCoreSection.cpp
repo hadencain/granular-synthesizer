@@ -37,32 +37,23 @@ GrainCoreSection::GrainCoreSection(juce::AudioProcessorValueTreeState& apvts)
 
 void GrainCoreSection::resized()
 {
-    const int knobW  = 80;
-    const int knobH  = 90;
-    const int gap    = 10;
-    const int row1Y  = 10;
-    const int row2Y  = row1Y + knobH + gap;
-    const int comboH = 22;
+    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 8;
+    const int row2Y = startY + kH + gap;
+    const int row3Y = row2Y + kH + gap;
 
-    int x = gap;
-    for (auto* c : { &grainSize, &grainDensity, &grainOverlap, &interonset })
-    {
-        c->setBounds(x, row1Y, knobW, knobH);
-        x += knobW + gap;
-    }
+    int x = startX;
+    for (auto* c : { &grainSize, &grainDensity, &grainOverlap })
+    { c->setBounds(x, startY, kW, kH); x += kW + gap; }
 
-    x = gap;
-    for (auto* c : { &randomizeSize, &randomizeDensity })
-    {
-        c->setBounds(x, row2Y, knobW, knobH);
-        x += knobW + gap;
-    }
+    x = startX;
+    for (auto* c : { &interonset, &randomizeSize, &randomizeDensity })
+    { c->setBounds(x, row2Y, kW, kH); x += kW + gap; }
 
-    // Envelope and Direction combo boxes in row 2, after random knobs
-    envelopeLabel.setBounds(x, row2Y, knobW, 14);
-    envelopeBox.setBounds(x, row2Y + 16, knobW + 20, comboH);
-    x += knobW + 30;
-
-    directionLabel.setBounds(x, row2Y, knobW, 14);
-    directionBox.setBounds(x, row2Y + 16, knobW + 20, comboH);
+    const int comboW = 110, comboH = 22;
+    x = startX;
+    envelopeLabel.setBounds(x, row3Y, comboW, 14);
+    envelopeBox.setBounds(x, row3Y + 16, comboW, comboH);
+    x += comboW + gap;
+    directionLabel.setBounds(x, row3Y, comboW, 14);
+    directionBox.setBounds(x, row3Y + 16, comboW, comboH);
 }
