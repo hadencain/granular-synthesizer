@@ -79,7 +79,7 @@ void GranularLookAndFeel::drawRotarySlider(juce::Graphics& g,
     const float cosA   = std::cos(angle);
     const float innerR = radius * 0.32f;
     const float outerR = radius * 0.72f;
-    g.setColour(accent);
+    g.setColour(juce::Colour(0xffc89040));   // amber tick
     g.drawLine(centreX + innerR * sinA, centreY - innerR * cosA,
                centreX + outerR * sinA, centreY - outerR * cosA,
                1.5f);
