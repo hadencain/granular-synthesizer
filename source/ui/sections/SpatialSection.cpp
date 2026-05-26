@@ -13,6 +13,20 @@ SpatialSection::SpatialSection(juce::AudioProcessorValueTreeState& apvts)
     voiceDetune.setLabel("V.Detune");
     voicesLabel.setText("Voices", juce::dontSendNotification);
 
+    pan.getSlider().setTextValueSuffix("%");
+    pan.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    panRandom.getSlider().setTextValueSuffix("%");
+    panRandom.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    stereoWidth.getSlider().setTextValueSuffix("%");
+    stereoWidth.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    voiceDetune.getSlider().setTextValueSuffix(" ct");
+    voiceDetune.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    voicesSlider.setNumDecimalPlacesToDisplay(0);   // badge shows int
+
     for (auto* c : { &pan, &panRandom, &stereoWidth, &voiceDetune })
         addAndMakeVisible(c);
     addAndMakeVisible(voicesSlider);
