@@ -20,7 +20,7 @@ private:
 
     juce::AudioProcessorValueTreeState::SliderAttachment
         lenAtt, fbAtt, gainAtt;
-    juce::AudioProcessorValueTreeState::ComboBoxAttachment recModeAtt;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> recModeAtt;
 
     std::unique_ptr<juce::FileChooser> fileChooser;
 };
