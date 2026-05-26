@@ -90,7 +90,7 @@ void WaveformDisplay::paint(juce::Graphics& g)
     }
     else
     {
-        g.setColour(juce::Colour(0xff666666));
+        g.setColour(juce::Colour(0xffcc3030));
         g.setFont(juce::Font(10.0f, juce::Font::bold));
         g.drawText("NO AUDIO", getLocalBounds(), juce::Justification::centred);
     }
@@ -118,6 +118,13 @@ void WaveformDisplay::paint(juce::Graphics& g)
         g.setColour(juce::Colour(0xffcc2020));
         g.drawLine(lx,      bounds.getY() + 1.0f, lx,      bounds.getBottom() - 1.0f, 1.0f);
         g.drawLine(lx + lw, bounds.getY() + 1.0f, lx + lw, bounds.getBottom() - 1.0f, 1.0f);
+    }
+
+    // CRT scanline texture — subtle horizontal lines at 2px pitch
+    {
+        g.setColour(juce::Colours::black.withAlpha(0.04f));
+        for (int sy = getLocalBounds().getY(); sy < getLocalBounds().getBottom(); sy += 2)
+            g.drawHorizontalLine(sy, bounds.getX(), bounds.getRight());
     }
 
     // Active grain position markers — white vertical lines
