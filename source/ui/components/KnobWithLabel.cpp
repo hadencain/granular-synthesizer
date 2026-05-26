@@ -7,6 +7,7 @@ KnobWithLabel::KnobWithLabel()
 
     label.setJustificationType(juce::Justification::centred);
     label.setFont(juce::Font(9.5f, juce::Font::bold));
+    label.setColour(juce::Label::textColourId, juce::Colour(0xff909090));
     slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 14);
 }
 
