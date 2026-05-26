@@ -1,0 +1,23 @@
+# Build output
+build/
+
+# IDE / tooling
+.claude/
+.superpowers/
+*.user
+*.suo
+.vs/
+
+# Design docs / session artifacts
+docs/
+session_log.md
+todo.md
+scratch/
+_scratch-*
+
+# Loose text design files
+*.txt
+
+# OS
+.DS_Store
+Thumbs.db
