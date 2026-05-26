@@ -10,13 +10,13 @@ public:
     void resized() override;
 
 private:
-    KnobWithLabel position, spray, scanRate, loopStart, loopEnd, scrub;
+    KnobWithLabel position, spray, scanRate, loopStart, loopEnd, scrub, prob;
     juce::ComboBox  scanShapeBox;
     juce::Label     scanShapeLabel;
     juce::ToggleButton freezeBtn { "Freeze" };
 
     juce::AudioProcessorValueTreeState::SliderAttachment
-        posAtt, sprayAtt, scanRateAtt, loopStartAtt, loopEndAtt, scrubAtt;
+        posAtt, sprayAtt, scanRateAtt, loopStartAtt, loopEndAtt, scrubAtt, probAtt;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> scanShapeAtt;
     juce::AudioProcessorValueTreeState::ButtonAttachment   freezeAtt;
 };
