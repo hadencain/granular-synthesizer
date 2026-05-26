@@ -3,14 +3,17 @@
 BufferSection::BufferSection(juce::AudioProcessorValueTreeState& apvts)
     : lenAtt    (apvts, "buffer_length_ms",  bufferLength.getSlider()),
       fbAtt     (apvts, "record_feedback",   recordFeedback.getSlider()),
-      gainAtt   (apvts, "input_gain_db",     inputGain.getSlider()),
-      recModeAtt(apvts, "record_mode",       recordModeBox)
+      gainAtt   (apvts, "input_gain_db",     inputGain.getSlider())
 {
     bufferLength.setLabel("Buf Length");
     recordFeedback.setLabel("Feedback");
     inputGain.setLabel("Input Gain");
     recordModeLabel.setText("Record Mode", juce::dontSendNotification);
     filePathLabel.setText("No file loaded", juce::dontSendNotification);
+
+    recordModeBox.addItemList({"Off", "Continuous", "One-Shot", "Gate"}, 1);
+    recModeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        apvts, "record_mode", recordModeBox);
 
     for (auto* c : { &bufferLength, &recordFeedback, &inputGain })
         addAndMakeVisible(c);
