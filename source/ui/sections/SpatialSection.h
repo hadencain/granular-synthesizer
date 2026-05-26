@@ -8,10 +8,11 @@ class SpatialSection : public juce::Component
 public:
     explicit SpatialSection(juce::AudioProcessorValueTreeState& apvts);
     void resized() override;
+    void paintOverChildren(juce::Graphics& g) override;
 
 private:
     KnobWithLabel pan, panRandom, stereoWidth, voiceDetune;
-    juce::Slider  voicesSlider { juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight };
+    juce::Slider  voicesSlider { juce::Slider::LinearHorizontal, juce::Slider::NoTextBox };
     juce::Label   voicesLabel;
 
     juce::AudioProcessorValueTreeState::SliderAttachment

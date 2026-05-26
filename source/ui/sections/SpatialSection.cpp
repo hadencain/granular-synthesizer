@@ -16,7 +16,8 @@ SpatialSection::SpatialSection(juce::AudioProcessorValueTreeState& apvts)
     for (auto* c : { &pan, &panRandom, &stereoWidth, &voiceDetune })
         addAndMakeVisible(c);
     addAndMakeVisible(voicesSlider);
-    addAndMakeVisible(voicesLabel);
+
+    voicesSlider.onValueChange = [this] { repaint(); };
 }
 
 void SpatialSection::resized()
@@ -26,9 +27,21 @@ void SpatialSection::resized()
     for (auto* c : { &pan, &panRandom, &stereoWidth })
     { c->setBounds(x, startY, kW, kH); x += kW + gap; }
 
-    // voiceDetune on second row with voices slider
+    // voiceDetune on second row with voices badge
     const int row2Y = startY + kH + gap;
     voiceDetune.setBounds(startX, row2Y, kW, kH);
-    voicesLabel.setBounds(startX + kW + gap, row2Y, 60, 16);
-    voicesSlider.setBounds(startX + kW + gap, row2Y + 18, 160, 28);
+    voicesSlider.setBounds(startX + kW + gap, row2Y + 30, 80, 22);
+}
+
+void SpatialSection::paintOverChildren(juce::Graphics& g)
+{
+    const auto b = voicesSlider.getBounds().toFloat();
+    g.setColour(juce::Colour(0xff141414));
+    g.fillRoundedRectangle(b, 3.0f);
+    g.setColour(juce::Colour(0xff909090));
+    g.drawRoundedRectangle(b, 3.0f, 1.0f);
+    g.setColour(juce::Colour(0xffd0d0d0));
+    g.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 10.0f, juce::Font::bold));
+    g.drawText("VOICES  " + juce::String(static_cast<int>(voicesSlider.getValue())),
+               voicesSlider.getBounds(), juce::Justification::centred);
 }
