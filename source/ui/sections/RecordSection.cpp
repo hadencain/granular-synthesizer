@@ -11,7 +11,7 @@ RecordSection::RecordSection(PluginProcessor& p) : processor(p)
 
     statusLabel.setText("IDLE", juce::dontSendNotification);
     statusLabel.setFont(juce::Font(11.0f, juce::Font::bold));
-    statusLabel.setColour(juce::Label::textColourId, juce::Colour(0xff606060));
+    statusLabel.setColour(juce::Label::textColourId, juce::Colour(0xffe09020));
     addAndMakeVisible(statusLabel);
 
     timeLabel.setText("00:00.000", juce::dontSendNotification);
@@ -21,7 +21,7 @@ RecordSection::RecordSection(PluginProcessor& p) : processor(p)
 
     fileLabel.setText("—", juce::dontSendNotification);
     fileLabel.setFont(juce::Font(10.0f));
-    fileLabel.setColour(juce::Label::textColourId, juce::Colour(0xff606060));
+    fileLabel.setColour(juce::Label::textColourId, juce::Colour(0xff909090));
     addAndMakeVisible(fileLabel);
 
     recordBtn.setButtonText("REC");
@@ -49,7 +49,7 @@ void RecordSection::toggleRecording()
         processor.stopRecording();
         recordBtn.setButtonText("REC");
         statusLabel.setText("IDLE", juce::dontSendNotification);
-        statusLabel.setColour(juce::Label::textColourId, juce::Colour(0xff606060));
+        statusLabel.setColour(juce::Label::textColourId, juce::Colour(0xffe09020));
         if (currentFile.existsAsFile())
             fileLabel.setText(currentFile.getFileName(), juce::dontSendNotification);
     }
