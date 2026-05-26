@@ -15,6 +15,7 @@ private:
     {
         explicit LFOStrip(juce::AudioProcessorValueTreeState& apvts, int n);
         void resized() override;
+        void paint(juce::Graphics& g) override;
 
         KnobWithLabel rate, depth, phase;
         juce::ComboBox shapeBox;
@@ -44,10 +45,7 @@ private:
     juce::Label   efLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> efAtkAtt, efRelAtt;
 
-    // Section labels
-    juce::Label lfoSectionLabel, envSectionLabel, followerSectionLabel, matrixSectionLabel;
-
     ModMatrixGrid        modGrid;
-    juce::Component      contentComp;   // scrollable content host
+    juce::Component      contentComp;
     juce::Viewport       viewport;
 };
