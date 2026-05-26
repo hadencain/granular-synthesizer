@@ -1,6 +1,5 @@
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_gui_extra/juce_gui_extra.h>
 #include "PluginProcessor.h"
 #include "ui/GranularLookAndFeel.h"
 #include "ui/components/WaveformDisplay.h"
@@ -15,7 +14,8 @@
 #include "ui/sections/EffectsSection.h"
 #include "ui/sections/RecordSection.h"
 
-class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer
+class PluginEditor : public juce::AudioProcessorEditor,
+                     private juce::Timer
 {
 public:
     explicit PluginEditor(PluginProcessor&);
@@ -26,35 +26,36 @@ public:
 
 private:
     void timerCallback() override;
-    void buildSidePanel();
+    void mouseDown(const juce::MouseEvent& e) override;
+    void randomizeAllParams();
 
     PluginProcessor& processor;
     GranularLookAndFeel laf;
 
     // Header
-    juce::Label titleLabel, grainCountLabel;
+    juce::Label      titleLabel, grainCountLabel;
+    juce::TextButton playBtn;
 
-    // Tabs
-    juce::TabbedComponent tabs { juce::TabbedButtonBar::TabsAtTop };
+    // Waveform strip
+    WaveformDisplay waveformDisplay;
 
-    // Section components (owned by tabs)
+    // Section columns
     GrainCoreSection   grainSection;
     PlayheadSection    playheadSection;
     PitchSection       pitchSection;
     AmplitudeSection   ampSection;
     SpatialSection     spatialSection;
-    ModSection         modSection;
     FilterSection      filterSection;
     BufferSection      bufferSection;
     EffectsSection     fxSection;
     RecordSection      recordSection;
+    ModSection         modSection;
 
-    // Side panel
-    WaveformDisplay waveformDisplay;
-    juce::Slider    masterVolSlider { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
-    juce::Label     masterVolLabel;
-    juce::Slider    dryWetSlider { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
-    juce::Label     dryWetLabel;
+    // LFO column footer — master out knobs
+    juce::Slider masterVolSlider { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
+    juce::Label  masterVolLabel;
+    juce::Slider dryWetSlider   { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
+    juce::Label  dryWetLabel;
 
     juce::AudioProcessorValueTreeState::SliderAttachment masterVolAtt, dryWetAtt;
 

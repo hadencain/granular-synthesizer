@@ -21,11 +21,14 @@ SpatialSection::SpatialSection(juce::AudioProcessorValueTreeState& apvts)
 
 void SpatialSection::resized()
 {
-    const int knobW = 80, knobH = 90, gap = 10;
-    int x = gap;
-    for (auto* c : { &pan, &panRandom, &stereoWidth, &voiceDetune })
-    { c->setBounds(x, 10, knobW, knobH); x += knobW + gap; }
+    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 8;
+    int x = startX;
+    for (auto* c : { &pan, &panRandom, &stereoWidth })
+    { c->setBounds(x, startY, kW, kH); x += kW + gap; }
 
-    voicesLabel.setBounds(gap, 10 + knobH + gap, 60, 16);
-    voicesSlider.setBounds(gap, 10 + knobH + gap + 18, 300, 24);
+    // voiceDetune on second row with voices slider
+    const int row2Y = startY + kH + gap;
+    voiceDetune.setBounds(startX, row2Y, kW, kH);
+    voicesLabel.setBounds(startX + kW + gap, row2Y, 60, 16);
+    voicesSlider.setBounds(startX + kW + gap, row2Y + 18, 160, 28);
 }

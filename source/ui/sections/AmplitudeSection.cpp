@@ -26,12 +26,19 @@ AmplitudeSection::AmplitudeSection(juce::AudioProcessorValueTreeState& apvts)
 
 void AmplitudeSection::resized()
 {
-    const int knobW = 80, knobH = 90, gap = 10;
-    int x = gap;
-    for (auto* c : { &amplitude, &ampRandom, &velSens, &crossfade })
-    { c->setBounds(x, 10, knobW, knobH); x += knobW + gap; }
+    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 8;
+    const int row2Y = startY + kH + gap;
+    const int row3Y = row2Y + kH + gap;
 
-    x = gap;
-    for (auto* c : { &attack, &decay, &sustain, &release })
-    { c->setBounds(x, 10 + knobH + gap, knobW, knobH); x += knobW + gap; }
+    int x = startX;
+    for (auto* c : { &amplitude, &ampRandom, &velSens })
+    { c->setBounds(x, startY, kW, kH); x += kW + gap; }
+
+    x = startX;
+    for (auto* c : { &crossfade, &attack, &decay })
+    { c->setBounds(x, row2Y, kW, kH); x += kW + gap; }
+
+    x = startX;
+    for (auto* c : { &sustain, &release })
+    { c->setBounds(x, row3Y, kW, kH); x += kW + gap; }
 }
