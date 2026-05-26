@@ -19,6 +19,30 @@ AmplitudeSection::AmplitudeSection(juce::AudioProcessorValueTreeState& apvts)
     sustain.setLabel("Sustain");
     release.setLabel("Release");
 
+    amplitude.getSlider().setTextValueSuffix(" dB");
+    amplitude.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    ampRandom.getSlider().setTextValueSuffix(" dB");
+    ampRandom.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    velSens.getSlider().setTextValueSuffix("%");
+    velSens.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    crossfade.getSlider().setTextValueSuffix(" ms");
+    crossfade.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    attack.getSlider().setTextValueSuffix(" ms");
+    attack.getSlider().setNumDecimalPlacesToDisplay(0);
+
+    decay.getSlider().setTextValueSuffix(" ms");
+    decay.getSlider().setNumDecimalPlacesToDisplay(0);
+
+    sustain.getSlider().setTextValueSuffix("%");
+    sustain.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    release.getSlider().setTextValueSuffix(" ms");
+    release.getSlider().setNumDecimalPlacesToDisplay(0);
+
     for (auto* c : { &amplitude, &ampRandom, &velSens, &crossfade,
                      &attack, &decay, &sustain, &release })
         addAndMakeVisible(c);

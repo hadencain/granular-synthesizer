@@ -14,6 +14,21 @@ FilterSection::FilterSection(juce::AudioProcessorValueTreeState& apvts)
     keytrack.setLabel("Keytrack");
     filterTypeLabel.setText("Type", juce::dontSendNotification);
 
+    cutoff.getSlider().setTextValueSuffix(" Hz");
+    cutoff.getSlider().setNumDecimalPlacesToDisplay(0);
+
+    resonance.getSlider().setTextValueSuffix("%");
+    resonance.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    envDepth.getSlider().setTextValueSuffix("%");
+    envDepth.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    lfoDepth.getSlider().setTextValueSuffix("%");
+    lfoDepth.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    keytrack.getSlider().setTextValueSuffix("%");
+    keytrack.getSlider().setNumDecimalPlacesToDisplay(1);
+
     filterTypeBox.addItemList({"Low-Pass", "High-Pass", "Band-Pass", "Notch"}, 1);
     typeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         apvts, "filter_type", filterTypeBox);
