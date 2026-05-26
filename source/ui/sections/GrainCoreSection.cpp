@@ -15,6 +15,24 @@ GrainCoreSection::GrainCoreSection(juce::AudioProcessorValueTreeState& apvts)
     randomizeSize.setLabel("Rnd Size");
     randomizeDensity.setLabel("Rnd Density");
 
+    grainSize.getSlider().setTextValueSuffix(" ms");
+    grainSize.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    grainDensity.getSlider().setTextValueSuffix(" /s");
+    grainDensity.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    grainOverlap.getSlider().setTextValueSuffix("%");
+    grainOverlap.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    interonset.getSlider().setTextValueSuffix(" ms");
+    interonset.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    randomizeSize.getSlider().setTextValueSuffix("%");
+    randomizeSize.getSlider().setNumDecimalPlacesToDisplay(1);
+
+    randomizeDensity.getSlider().setTextValueSuffix("%");
+    randomizeDensity.getSlider().setNumDecimalPlacesToDisplay(1);
+
     envelopeLabel.setText("Envelope", juce::dontSendNotification);
     directionLabel.setText("Direction", juce::dontSendNotification);
 
