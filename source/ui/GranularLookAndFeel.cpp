@@ -37,6 +37,9 @@ GranularLookAndFeel::GranularLookAndFeel()
     setColour(juce::TableHeaderComponent::textColourId,       textSecondary);
     setColour(juce::ListBox::backgroundColourId, backgroundDark);
     setColour(juce::ListBox::textColourId,        textPrimary);
+    setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
+    setColour(juce::Slider::textBoxOutlineColourId,    juce::Colours::transparentBlack);
+    setColour(juce::Slider::textBoxTextColourId,       textPrimary);
 }
 
 void GranularLookAndFeel::drawRotarySlider(juce::Graphics& g,
