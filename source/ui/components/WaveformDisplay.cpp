@@ -40,12 +40,15 @@ void WaveformDisplay::setParam(const char* paramID, float normalizedVal)
 
 void WaveformDisplay::mouseDown(const juce::MouseEvent& e)
 {
+    if (thumbnail.getTotalLength() == 0.0)
+    {
+        launchFileBrowser();
+        return;
+    }
     const float norm = toNormalized(e.x);
-    isDragging     = false;
-    dragStartNorm  = norm;
+    isDragging      = false;
+    dragStartNorm   = norm;
     dragCurrentNorm = norm;
-
-    // Single click sets playhead position
     setParam("position", norm);
 }
 
@@ -66,6 +69,36 @@ void WaveformDisplay::mouseDrag(const juce::MouseEvent& e)
 void WaveformDisplay::mouseUp(const juce::MouseEvent& /*e*/)
 {
     isDragging = false;
+}
+
+bool WaveformDisplay::isInterestedInFileDrag(const juce::StringArray& files)
+{
+    static const juce::StringArray kExts { ".wav", ".aif", ".aiff", ".flac", ".mp3" };
+    for (const auto& f : files)
+        if (kExts.contains(juce::File(f).getFileExtension().toLowerCase()))
+            return true;
+    return false;
+}
+
+void WaveformDisplay::filesDropped(const juce::StringArray& files, int, int)
+{
+    if (files.isEmpty()) return;
+    const juce::File file(files[0]);
+    loadFile(file);
+    if (onLoadFile) onLoadFile(file);
+}
+
+void WaveformDisplay::launchFileBrowser()
+{
+    fileChooser = std::make_unique<juce::FileChooser>(
+        "Load Audio File", juce::File{}, "*.wav;*.aif;*.aiff;*.flac;*.mp3");
+    fileChooser->launchAsync(juce::FileBrowserComponent::openMode,
+        [this](const juce::FileChooser& fc) {
+            if (fc.getResults().isEmpty()) return;
+            const auto file = fc.getResult();
+            loadFile(file);
+            if (onLoadFile) onLoadFile(file);
+        });
 }
 
 void WaveformDisplay::paint(juce::Graphics& g)
@@ -90,9 +123,10 @@ void WaveformDisplay::paint(juce::Graphics& g)
     }
     else
     {
-        g.setColour(juce::Colour(0xffcc3030));
-        g.setFont(juce::Font(10.0f, juce::Font::bold));
-        g.drawText("NO AUDIO", getLocalBounds(), juce::Justification::centred);
+        g.setColour(juce::Colour(0xff606060));
+        g.setFont(juce::Font(10.0f));
+        g.drawText("DROP AUDIO  \xe2\x80\x94  or click to browse",
+                   getLocalBounds(), juce::Justification::centred);
     }
 
     // Loop region overlay — read from APVTS if available, else use drag state
