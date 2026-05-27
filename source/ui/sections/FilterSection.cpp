@@ -17,17 +17,24 @@ FilterSection::FilterSection(juce::AudioProcessorValueTreeState& apvts)
     cutoff.getSlider().setTextValueSuffix(" Hz");
     cutoff.getSlider().setNumDecimalPlacesToDisplay(0);
 
-    resonance.getSlider().setTextValueSuffix("%");
-    resonance.getSlider().setNumDecimalPlacesToDisplay(1);
+    resonance.getSlider().setNumDecimalPlacesToDisplay(2);
 
-    envDepth.getSlider().setTextValueSuffix("%");
-    envDepth.getSlider().setNumDecimalPlacesToDisplay(1);
+    envDepth.getSlider().setTextValueSuffix(" Hz");
+    envDepth.getSlider().setNumDecimalPlacesToDisplay(0);
 
-    lfoDepth.getSlider().setTextValueSuffix("%");
-    lfoDepth.getSlider().setNumDecimalPlacesToDisplay(1);
+    lfoDepth.getSlider().textFromValueFunction = [](double v) -> juce::String {
+        return juce::String(juce::roundToInt(v * 100)) + "%";
+    };
+    lfoDepth.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
+        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+    };
 
-    keytrack.getSlider().setTextValueSuffix("%");
-    keytrack.getSlider().setNumDecimalPlacesToDisplay(1);
+    keytrack.getSlider().textFromValueFunction = [](double v) -> juce::String {
+        return juce::String(juce::roundToInt(v * 100)) + "%";
+    };
+    keytrack.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
+        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+    };
 
     filterTypeBox.addItemList({"Low-Pass", "High-Pass", "Band-Pass", "Notch"}, 1);
     typeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(

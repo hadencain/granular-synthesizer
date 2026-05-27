@@ -21,16 +21,20 @@ GrainCoreSection::GrainCoreSection(juce::AudioProcessorValueTreeState& apvts)
     grainDensity.getSlider().setTextValueSuffix(" /s");
     grainDensity.getSlider().setNumDecimalPlacesToDisplay(1);
 
-    grainOverlap.getSlider().setTextValueSuffix("%");
-    grainOverlap.getSlider().setNumDecimalPlacesToDisplay(1);
+    grainOverlap.getSlider().textFromValueFunction = [](double v) -> juce::String {
+        return juce::String(juce::roundToInt(v * 100)) + "%";
+    };
+    grainOverlap.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
+        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+    };
 
     interonset.getSlider().setTextValueSuffix(" ms");
     interonset.getSlider().setNumDecimalPlacesToDisplay(1);
 
-    randomizeSize.getSlider().setTextValueSuffix("%");
+    randomizeSize.getSlider().setTextValueSuffix(" ms");
     randomizeSize.getSlider().setNumDecimalPlacesToDisplay(1);
 
-    randomizeDensity.getSlider().setTextValueSuffix("%");
+    randomizeDensity.getSlider().setTextValueSuffix(" /s");
     randomizeDensity.getSlider().setNumDecimalPlacesToDisplay(1);
 
     envelopeLabel.setText("Envelope", juce::dontSendNotification);
