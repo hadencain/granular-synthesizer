@@ -510,7 +510,7 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         lfos[i].setRate(raw.lfoRate[i]->load());
         lfos[i].setShape(static_cast<LFOShape>(static_cast<int>(raw.lfoShape[i]->load())));
         lfos[i].setPhaseOffset(raw.lfoPhase[i]->load());
-        lfos[i].process(); // advance by one sample (approximation for block)
+        lfos[i].processBlock(numSamples);
     }
     envFollower.setAttackMs(raw.efAttackMs->load());
     envFollower.setReleaseMs(raw.efReleaseMs->load());
