@@ -82,6 +82,10 @@ void GranularEngine::advancePlayhead(const GranularParams& p, int numSamples, do
     const double loopEnd   = juce::jmax(loopStart + 1.0, p.loopEnd * bufLen);
     const double loopRange = loopEnd - loopStart;
 
+    // Snap into loop region on reset, note-on, or loop boundary change
+    if (playheadPos < loopStart || playheadPos > loopEnd)
+        playheadPos = loopStart + static_cast<double>(p.position) * loopRange;
+
     const double rateHz = juce::jmax(0.001, static_cast<double>(
         p.scanRateHz + p.modScanRate * 10.0f));
     const double advancePerSample = rateHz / sampleRate;
@@ -174,8 +178,8 @@ void GranularEngine::spawnGrain(const GranularParams& p,
     // Position with spray
     const double sprayRange = (p.sprayMs + p.modSpray * 500.0f) / 1000.0 * sampleRate;
     const double spray = (rng.nextDouble() * 2.0 - 1.0) * sprayRange;
-    const double basePos = (p.position + p.modPosition) * bufLen;
-    g->readPosition = juce::jlimit(0.0, bufLen - 1.0, playheadPos + basePos + spray);
+    const double modOffset = static_cast<double>(p.modPosition) * bufLen;
+    g->readPosition = juce::jlimit(0.0, bufLen - 1.0, playheadPos + modOffset + spray);
 
     // Pitch
     float pitchSt = p.pitchShiftSemitones + p.detuneCents / 100.0f
