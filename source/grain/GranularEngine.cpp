@@ -13,14 +13,14 @@ void GranularEngine::reset()
     for (auto& g : grainPool) g.reset();
     nextGrainIndex    = 0;
     schedulerCountdown = 0.0;
-    playheadPos       = 0.0;
+    playheadPos       = -1.0;
     scanPhase         = 0.0;
     pendulumDir       = 1;
 }
 
 void GranularEngine::resetPlayhead() noexcept
 {
-    playheadPos  = 0.0;
+    playheadPos  = -1.0;
     scanPhase    = 0.0;
     pendulumDir  = 1;
 }
@@ -76,7 +76,7 @@ double GranularEngine::computeInteronsetSamples(const GranularParams& p) const n
 
 void GranularEngine::advancePlayhead(const GranularParams& p, int numSamples, double bufLen)
 {
-    if (bufLen <= 0.0 || p.freeze) return;
+    if (bufLen <= 0.0) return;
 
     const double loopStart = p.loopStart * bufLen;
     const double loopEnd   = juce::jmax(loopStart + 1.0, p.loopEnd * bufLen);
@@ -85,6 +85,8 @@ void GranularEngine::advancePlayhead(const GranularParams& p, int numSamples, do
     // Snap into loop region on reset, note-on, or loop boundary change
     if (playheadPos < loopStart || playheadPos > loopEnd)
         playheadPos = loopStart + static_cast<double>(p.position) * loopRange;
+
+    if (p.freeze) return;
 
     const double rateHz = juce::jmax(0.001, static_cast<double>(
         p.scanRateHz + p.modScanRate * 10.0f));
