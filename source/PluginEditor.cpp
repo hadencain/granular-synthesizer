@@ -43,17 +43,13 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     grainCountLabel.setJustificationType(juce::Justification::centredRight);
     addAndMakeVisible(grainCountLabel);
 
-    // Play toggle — sends a held MIDI note through the synth
-    playBtn.setButtonText("PLAY");
-    playBtn.setClickingTogglesState(true);
-    playBtn.onClick = [this]()
-    {
-        if (playBtn.getToggleState())
-            processor.getSynth().noteOn(1, 60, 0.8f);
-        else
-            processor.getSynth().noteOff(1, 60, 0.8f, true);
-    };
-    addAndMakeVisible(playBtn);
+    startBtn.setButtonText("START");
+    startBtn.onClick = [this]() { processor.getSynth().noteOn(1, 60, 0.8f); };
+    addAndMakeVisible(startBtn);
+
+    stopBtn.setButtonText("STOP");
+    stopBtn.onClick = [this]() { processor.getSynth().noteOff(1, 60, 0.8f, true); };
+    addAndMakeVisible(stopBtn);
 
     waveformDisplay.setBuffer(&p.getGrainBuffer());
     waveformDisplay.setAPVTS(&p.getAPVTS());
@@ -220,7 +216,8 @@ void PluginEditor::resized()
 
     // Header
     titleLabel.setBounds(16, 0, 250, kHeaderH);
-    playBtn.setBounds(278, 8, 70, 28);
+    startBtn.setBounds(278, 8, 62, 28);
+    stopBtn.setBounds (344, 8, 62, 28);
     grainCountLabel.setBounds(kMainW - 130, 0, 120, kHeaderH);
 
     // Waveform strip (cols 1–4, inset)
