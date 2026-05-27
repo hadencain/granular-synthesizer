@@ -31,8 +31,8 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     setLookAndFeel(&laf);
     setSize(kW, kH);
 
-    titleLabel.setText("GRANULATOR", juce::dontSendNotification);
-    titleLabel.setFont(juce::Font(18.0f, juce::Font::bold));
+    titleLabel.setText("granular synthesizer", juce::dontSendNotification);
+    titleLabel.setFont(juce::Font(14.0f, juce::Font::bold));
     titleLabel.setColour(juce::Label::textColourId, GranularLookAndFeel::accent);
     titleLabel.setMouseCursor(juce::MouseCursor::PointingHandCursor);
     titleLabel.addMouseListener(this, false);
@@ -82,8 +82,12 @@ PluginEditor::PluginEditor(PluginProcessor& p)
 
     masterVolSlider.setTextValueSuffix(" dB");
     masterVolSlider.setNumDecimalPlacesToDisplay(1);
-    dryWetSlider.setTextValueSuffix("%");
-    dryWetSlider.setNumDecimalPlacesToDisplay(1);
+    dryWetSlider.textFromValueFunction = [](double v) -> juce::String {
+        return juce::String(juce::roundToInt(v * 100)) + "%";
+    };
+    dryWetSlider.valueFromTextFunction = [](const juce::String& t) -> double {
+        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+    };
 
     addAndMakeVisible(masterVolSlider);
     addAndMakeVisible(masterVolLabel);
@@ -186,7 +190,7 @@ void PluginEditor::paint(juce::Graphics& g)
     const int spaceH  = static_cast<int>(kBodyH * 0.28f);
     const int filterH = static_cast<int>(kBodyH * 0.36f);
     const int bufferH = kBodyH - spaceH - filterH;
-    const int fxH     = static_cast<int>(kBodyH * 0.65f);
+    const int fxH     = static_cast<int>(kBodyH * 0.70f);
     const int recH    = kBodyH - fxH;
 
     struct Bar { int x, y, h; juce::Colour colour; };
@@ -215,8 +219,8 @@ void PluginEditor::resized()
     constexpr int kSLH = 4;
 
     // Header
-    titleLabel.setBounds(16, 0, 180, kHeaderH);
-    playBtn.setBounds(210, 8, 70, 28);
+    titleLabel.setBounds(16, 0, 250, kHeaderH);
+    playBtn.setBounds(278, 8, 70, 28);
     grainCountLabel.setBounds(kMainW - 130, 0, 120, kHeaderH);
 
     // Waveform strip (cols 1–4, inset)
@@ -246,7 +250,7 @@ void PluginEditor::resized()
 
     // ── Column 4: FX + Record ───────────────────────────────────────────────
     const int c4x   = kColW * 3;
-    const int fxH   = static_cast<int>(kBodyH * 0.65f);
+    const int fxH   = static_cast<int>(kBodyH * 0.70f);
     const int recH  = kBodyH - fxH;
     fxSection.setBounds(c4x + pad,  kBodyY + kSLH,      kColW - pad * 2, fxH - kSLH - pad);
     recordSection.setBounds(c4x + pad, kBodyY + fxH + kSLH, kColW - pad * 2, recH - kSLH - pad);

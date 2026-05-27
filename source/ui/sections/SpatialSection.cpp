@@ -13,14 +13,32 @@ SpatialSection::SpatialSection(juce::AudioProcessorValueTreeState& apvts)
     voiceDetune.setLabel("V.Detune");
     voicesLabel.setText("Voices", juce::dontSendNotification);
 
-    pan.getSlider().setTextValueSuffix("%");
-    pan.getSlider().setNumDecimalPlacesToDisplay(1);
+    pan.getSlider().textFromValueFunction = [](double v) -> juce::String {
+        const int pct = juce::roundToInt(std::abs(v) * 100);
+        if (pct == 0) return "C";
+        return (v < 0 ? "L" : "R") + juce::String(pct);
+    };
+    pan.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
+        const auto s = t.trim();
+        if (s.equalsIgnoreCase("C")) return 0.0;
+        if (s.startsWithIgnoreCase("L")) return -s.substring(1).getDoubleValue() / 100.0;
+        if (s.startsWithIgnoreCase("R")) return s.substring(1).getDoubleValue() / 100.0;
+        return s.getDoubleValue() / 100.0;
+    };
 
-    panRandom.getSlider().setTextValueSuffix("%");
-    panRandom.getSlider().setNumDecimalPlacesToDisplay(1);
+    panRandom.getSlider().textFromValueFunction = [](double v) -> juce::String {
+        return juce::String(juce::roundToInt(v * 100)) + "%";
+    };
+    panRandom.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
+        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+    };
 
-    stereoWidth.getSlider().setTextValueSuffix("%");
-    stereoWidth.getSlider().setNumDecimalPlacesToDisplay(1);
+    stereoWidth.getSlider().textFromValueFunction = [](double v) -> juce::String {
+        return juce::String(juce::roundToInt(v * 100)) + "%";
+    };
+    stereoWidth.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
+        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+    };
 
     voiceDetune.getSlider().setTextValueSuffix(" ct");
     voiceDetune.getSlider().setNumDecimalPlacesToDisplay(1);

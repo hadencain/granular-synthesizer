@@ -92,21 +92,21 @@ void RecordSection::paint(juce::Graphics& g)
             juce::Time::getCurrentTime().toMilliseconds() % 1000) / 1000.0f;
         const float alpha = 0.4f + 0.6f * std::abs(std::sin(phase * juce::MathConstants<float>::pi));
         g.setColour(juce::Colour(0xffff3333).withAlpha(alpha));
-        g.fillEllipse(b.getRight() - 20.0f, b.getY() + 16.0f, 8.0f, 8.0f);
+        g.fillEllipse(b.getRight() - 20.0f, b.getY() + 10.0f, 8.0f, 8.0f);
     }
 }
 
 void RecordSection::resized()
 {
     const int pad = 20;
-    const int btnH = 32;
+    const int btnH = 28;
     const int btnW = 90;
 
-    headerLabel.setBounds(pad, 12, 200, 20);
-    timeLabel.setBounds(pad, 44, 260, 34);
-    statusLabel.setBounds(pad, 84, 200, 18);
-    fileLabel.setBounds(pad, 106, getWidth() - pad * 2, 18);
+    headerLabel.setBounds(pad, 8, 200, 16);
+    timeLabel.setBounds(pad, 28, 260, 30);
+    statusLabel.setBounds(pad, 62, 200, 16);
+    fileLabel.setBounds(pad, 80, getWidth() - pad * 2, 16);
 
-    recordBtn.setBounds(pad, 136, btnW, btnH);
-    openFolderBtn.setBounds(pad + btnW + 12, 136, 120, btnH);
+    recordBtn.setBounds(pad, 100, btnW, btnH);
+    openFolderBtn.setBounds(pad + btnW + 12, 100, 120, btnH);
 }

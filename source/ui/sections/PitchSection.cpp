@@ -21,7 +21,7 @@ PitchSection::PitchSection(juce::AudioProcessorValueTreeState& apvts)
     detune.getSlider().setTextValueSuffix(" ct");
     detune.getSlider().setNumDecimalPlacesToDisplay(1);
 
-    pitchRandom.getSlider().setTextValueSuffix(" ct");
+    pitchRandom.getSlider().setTextValueSuffix(" st");
     pitchRandom.getSlider().setNumDecimalPlacesToDisplay(1);
 
     playbackRate.getSlider().setTextValueSuffix("x");

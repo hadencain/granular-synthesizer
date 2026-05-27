@@ -21,26 +21,24 @@ PlayheadSection::PlayheadSection(juce::AudioProcessorValueTreeState& apvts)
     scrub.setLabel("Scrub");
     prob.setLabel("Prob");
 
-    position.getSlider().setTextValueSuffix("%");
-    position.getSlider().setNumDecimalPlacesToDisplay(1);
+    auto pct = [](juce::Slider& s) {
+        s.textFromValueFunction = [](double v) -> juce::String {
+            return juce::String(juce::roundToInt(v * 100)) + "%";
+        };
+        s.valueFromTextFunction = [](const juce::String& t) -> double {
+            return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+        };
+    };
 
+    pct(position.getSlider());
     spray.getSlider().setTextValueSuffix(" ms");
     spray.getSlider().setNumDecimalPlacesToDisplay(1);
-
     scanRate.getSlider().setTextValueSuffix(" Hz");
     scanRate.getSlider().setNumDecimalPlacesToDisplay(2);
-
-    loopStart.getSlider().setTextValueSuffix("%");
-    loopStart.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    loopEnd.getSlider().setTextValueSuffix("%");
-    loopEnd.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    scrub.getSlider().setTextValueSuffix("%");
-    scrub.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    prob.getSlider().setTextValueSuffix("%");
-    prob.getSlider().setNumDecimalPlacesToDisplay(1);
+    pct(loopStart.getSlider());
+    pct(loopEnd.getSlider());
+    pct(scrub.getSlider());
+    pct(prob.getSlider());
 
     scanShapeLabel.setText("Scan Shape", juce::dontSendNotification);
 

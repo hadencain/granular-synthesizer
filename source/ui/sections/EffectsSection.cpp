@@ -41,8 +41,16 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
     limiterRelease.setLabel("Rel");  att(limiterRelease,"fx_limiter_release");
     pingPongAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, "fx_delay_pingpong", pingPongBtn);
 
-    drive.getSlider().setTextValueSuffix(" dB");
-    drive.getSlider().setNumDecimalPlacesToDisplay(1);
+    auto pct = [](juce::Slider& s) {
+        s.textFromValueFunction = [](double v) -> juce::String {
+            return juce::String(juce::roundToInt(v * 100)) + "%";
+        };
+        s.valueFromTextFunction = [](const juce::String& t) -> double {
+            return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
+        };
+    };
+
+    pct(drive.getSlider());
 
     for (int i = 0; i < 4; ++i)
     {
@@ -50,29 +58,22 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
         eq[i].freq.getSlider().setNumDecimalPlacesToDisplay(0);
         eq[i].gain.getSlider().setTextValueSuffix(" dB");
         eq[i].gain.getSlider().setNumDecimalPlacesToDisplay(1);
-        eq[i].q.getSlider().setNumDecimalPlacesToDisplay(2);   // no suffix for Q
+        eq[i].q.getSlider().setNumDecimalPlacesToDisplay(2);
     }
 
     chorusRate.getSlider().setTextValueSuffix(" Hz");
     chorusRate.getSlider().setNumDecimalPlacesToDisplay(2);
-    chorusDepth.getSlider().setTextValueSuffix("%");
-    chorusDepth.getSlider().setNumDecimalPlacesToDisplay(1);
-    chorusMix.getSlider().setTextValueSuffix("%");
-    chorusMix.getSlider().setNumDecimalPlacesToDisplay(1);
+    pct(chorusDepth.getSlider());
+    pct(chorusMix.getSlider());
 
     delayTime.getSlider().setTextValueSuffix(" ms");
     delayTime.getSlider().setNumDecimalPlacesToDisplay(0);
-    delayFeedback.getSlider().setTextValueSuffix("%");
-    delayFeedback.getSlider().setNumDecimalPlacesToDisplay(1);
-    delayMix.getSlider().setTextValueSuffix("%");
-    delayMix.getSlider().setNumDecimalPlacesToDisplay(1);
+    pct(delayFeedback.getSlider());
+    pct(delayMix.getSlider());
 
-    reverbRoom.getSlider().setTextValueSuffix("%");
-    reverbRoom.getSlider().setNumDecimalPlacesToDisplay(1);
-    reverbDamp.getSlider().setTextValueSuffix("%");
-    reverbDamp.getSlider().setNumDecimalPlacesToDisplay(1);
-    reverbMix.getSlider().setTextValueSuffix("%");
-    reverbMix.getSlider().setNumDecimalPlacesToDisplay(1);
+    pct(reverbRoom.getSlider());
+    pct(reverbDamp.getSlider());
+    pct(reverbMix.getSlider());
 
     limiterThresh.getSlider().setTextValueSuffix(" dB");
     limiterThresh.getSlider().setNumDecimalPlacesToDisplay(1);
