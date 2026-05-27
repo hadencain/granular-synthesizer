@@ -34,7 +34,7 @@ private:
 
     // Header
     juce::Label      titleLabel, grainCountLabel;
-    juce::TextButton playBtn;
+    juce::TextButton startBtn, stopBtn;
 
     // Waveform strip
     WaveformDisplay waveformDisplay;
