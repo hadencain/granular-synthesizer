@@ -64,7 +64,7 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     addAndMakeVisible(fxSection);
     addAndMakeVisible(modSection);
 
-    masterVolLabel.setText("VOL", juce::dontSendNotification);
+    masterVolLabel.setText("GAIN", juce::dontSendNotification);
     masterVolLabel.setJustificationType(juce::Justification::centred);
     masterVolLabel.setFont(juce::Font(9.0f, juce::Font::bold));
     masterVolLabel.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
@@ -279,12 +279,13 @@ void PluginEditor::resized()
     const int footY = kBodyY + modH;
     modSection.setBounds(kMainW + pad, kBodyY + kSLH, kLfoColW - pad * 2, modH - kSLH - pad);
 
-    // VOL + WET side by side in LFO footer
-    const int knobW = (kLfoColW - pad * 3) / 2;
-    const int lblH  = 12;
-    const int knobSz = kLfoFootH - lblH - pad;
-    masterVolLabel.setBounds (kMainW + pad,            footY + pad,        knobW, lblH);
-    masterVolSlider.setBounds(kMainW + pad,            footY + pad + lblH, knobW, knobSz);
-    dryWetLabel.setBounds    (kMainW + pad * 2 + knobW, footY + pad,       knobW, lblH);
-    dryWetSlider.setBounds   (kMainW + pad * 2 + knobW, footY + pad + lblH, knobW, knobSz);
+    // GAIN slider (narrow vertical) + WET knob in LFO footer
+    const int gainW   = 36;
+    const int wetW    = 100;
+    const int lblH    = 12;
+    const int sliderH = kLfoFootH - lblH - pad;
+    masterVolLabel.setBounds(kMainW + pad,               footY + pad,        gainW, lblH);
+    masterVolSlider.setBounds(kMainW + pad,              footY + pad + lblH, gainW, sliderH);
+    dryWetLabel.setBounds   (kMainW + pad * 2 + gainW,   footY + pad,        wetW,  lblH);
+    dryWetSlider.setBounds  (kMainW + pad * 2 + gainW,   footY + pad + lblH, wetW,  sliderH);
 }

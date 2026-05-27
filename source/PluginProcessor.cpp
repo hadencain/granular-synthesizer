@@ -25,123 +25,144 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     using PB  = juce::AudioParameterBool;
     using PC  = juce::AudioParameterChoice;
     using VT  = juce::AudioProcessorValueTreeState::ParameterLayout;
+    using A   = juce::AudioParameterFloatAttributes;
+
+    // Format helpers — these control what the slider text box shows
+    auto fMs  = A().withStringFromValueFunction([](float v, int){ return juce::String(v, 1) + " ms"; });
+    auto fHz  = A().withStringFromValueFunction([](float v, int){ return (v >= 100.0f ? juce::String(juce::roundToInt(v)) : juce::String(v, 1)) + " Hz"; });
+    auto fHz2 = A().withStringFromValueFunction([](float v, int){ return juce::String(v, 2) + " Hz"; });
+    auto fDb  = A().withStringFromValueFunction([](float v, int){ return juce::String(v, 1) + " dB"; });
+    auto fPct = A().withStringFromValueFunction([](float v, int){ return juce::String(juce::roundToInt(v * 100)) + "%"; });
+    auto fSt  = A().withStringFromValueFunction([](float v, int){ return juce::String(v, 1) + " st"; });
+    auto fCt  = A().withStringFromValueFunction([](float v, int){ return juce::String(juce::roundToInt(v)) + " ct"; });
+    auto fX   = A().withStringFromValueFunction([](float v, int){ return juce::String(v, 2) + "x"; });
+    auto fQ   = A().withStringFromValueFunction([](float v, int){ return juce::String(v, 2); });
+    auto fDeg = A().withStringFromValueFunction([](float v, int){ return juce::String(juce::roundToInt(v)) + "\xc2\xb0"; });
+    auto fPan = A().withStringFromValueFunction([](float v, int) -> juce::String {
+        if (std::abs(v) < 0.005f) return "C";
+        int p = juce::roundToInt(std::abs(v) * 100);
+        return juce::String(p) + (v < 0.0f ? "L" : "R");
+    });
+    auto fAmp = A().withStringFromValueFunction([](float v, int) -> juce::String {
+        if (v <= 0.0001f) return "-inf dB";
+        return juce::String(20.0f * std::log10(v), 1) + " dB";
+    });
 
     VT layout;
 
     // --- Grain Core ---
-    layout.add(std::make_unique<P>("grain_size_ms",      "Grain Size",        logRange(1.0f, 500.0f, 50.0f),   80.0f,  juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("grain_density",      "Grain Density",     logRange(1.0f, 500.0f, 50.0f),   40.0f,  juce::AudioParameterFloatAttributes().withLabel("/s")));
+    layout.add(std::make_unique<P>("grain_size_ms",      "Grain Size",        logRange(1.0f, 500.0f, 50.0f),   80.0f,  fMs));
+    layout.add(std::make_unique<P>("grain_density",      "Grain Density",     logRange(1.0f, 500.0f, 50.0f),   40.0f,  fHz));
     layout.add(std::make_unique<PC>("grain_envelope",    "Grain Envelope",    juce::StringArray{"Hann","Gaussian","Trapezoid","Rectangle","Triangular","Tukey"}, 0));
-    layout.add(std::make_unique<P>("grain_overlap",      "Grain Overlap",     juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f));
-    layout.add(std::make_unique<P>("interonset_ms",      "Interonset Time",   logRange(1.0f, 1000.0f, 50.0f),  25.0f,  juce::AudioParameterFloatAttributes().withLabel("ms")));
+    layout.add(std::make_unique<P>("grain_overlap",      "Grain Overlap",     juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f, fPct));
+    layout.add(std::make_unique<P>("interonset_ms",      "Interonset Time",   logRange(1.0f, 1000.0f, 50.0f),  25.0f,  fMs));
     layout.add(std::make_unique<PC>("grain_direction",   "Grain Direction",   juce::StringArray{"Forward","Reverse","Bidirectional","Random"}, 0));
-    layout.add(std::make_unique<P>("randomize_size_ms",  "Randomize Size",    juce::NormalisableRange<float>(0.0f, 250.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("randomize_density",  "Randomize Density", juce::NormalisableRange<float>(0.0f, 200.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("/s")));
-    layout.add(std::make_unique<P>("grain_probability", "Grain Probability",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 1.0f));
+    layout.add(std::make_unique<P>("randomize_size_ms",  "Randomize Size",    juce::NormalisableRange<float>(0.0f, 250.0f), 0.0f, fMs));
+    layout.add(std::make_unique<P>("randomize_density",  "Randomize Density", juce::NormalisableRange<float>(0.0f, 200.0f), 0.0f, fHz));
+    layout.add(std::make_unique<P>("grain_probability",  "Grain Probability", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 1.0f, fPct));
 
     // --- Playhead ---
-    layout.add(std::make_unique<P>("position",           "Position",          juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("spray_ms",           "Spray",             juce::NormalisableRange<float>(0.0f, 500.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("scan_rate_hz",       "Scan Rate",         logRange(0.001f, 10.0f, 0.3f),   0.1f,   juce::AudioParameterFloatAttributes().withLabel("Hz")));
+    layout.add(std::make_unique<P>("position",           "Position",          juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("spray_ms",           "Spray",             juce::NormalisableRange<float>(0.0f, 500.0f), 0.0f, fMs));
+    layout.add(std::make_unique<P>("scan_rate_hz",       "Scan Rate",         logRange(0.001f, 10.0f, 0.3f),   0.1f,   fHz2));
     layout.add(std::make_unique<PC>("scan_shape",        "Scan Shape",        juce::StringArray{"Forward","Reverse","Pendulum","Random Walk","Sine"}, 0));
-    layout.add(std::make_unique<P>("loop_start",         "Loop Start",        juce::NormalisableRange<float>(0.0f, 0.99f), 0.0f));
-    layout.add(std::make_unique<P>("loop_end",           "Loop End",          juce::NormalisableRange<float>(0.01f, 1.0f), 1.0f));
+    layout.add(std::make_unique<P>("loop_start",         "Loop Start",        juce::NormalisableRange<float>(0.0f, 0.99f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("loop_end",           "Loop End",          juce::NormalisableRange<float>(0.01f, 1.0f), 1.0f, fPct));
     layout.add(std::make_unique<PB>("freeze",            "Freeze",            false));
-    layout.add(std::make_unique<P>("scrub",              "Scrub",             juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
+    layout.add(std::make_unique<P>("scrub",              "Scrub",             juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
 
     // --- Pitch ---
-    layout.add(std::make_unique<P>("pitch_shift_st",     "Pitch Shift",       juce::NormalisableRange<float>(-48.0f, 48.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("st")));
-    layout.add(std::make_unique<P>("detune_cents",       "Detune",            juce::NormalisableRange<float>(-100.0f, 100.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("ct")));
-    layout.add(std::make_unique<P>("pitch_random_st",    "Pitch Random",      juce::NormalisableRange<float>(0.0f, 24.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("st")));
-    layout.add(std::make_unique<P>("playback_rate",      "Playback Rate",     logRange(0.01f, 4.0f, 1.0f),     1.0f,   juce::AudioParameterFloatAttributes().withLabel("x")));
+    layout.add(std::make_unique<P>("pitch_shift_st",     "Pitch Shift",       juce::NormalisableRange<float>(-48.0f, 48.0f), 0.0f, fSt));
+    layout.add(std::make_unique<P>("detune_cents",       "Detune",            juce::NormalisableRange<float>(-100.0f, 100.0f), 0.0f, fCt));
+    layout.add(std::make_unique<P>("pitch_random_st",    "Pitch Random",      juce::NormalisableRange<float>(0.0f, 24.0f), 0.0f, fSt));
+    layout.add(std::make_unique<P>("playback_rate",      "Playback Rate",     logRange(0.01f, 4.0f, 1.0f),     1.0f,   fX));
     layout.add(std::make_unique<PC>("transpose_mode",    "Transpose Mode",    juce::StringArray{"Doppler","Interpolated","Phase Vocoder"}, 0));
     layout.add(std::make_unique<PC>("pitch_quantize",    "Pitch Quantize",    juce::StringArray{"Off","Chromatic","Major","Minor","Custom"}, 0));
-    layout.add(std::make_unique<P>("formant_shift_st",   "Formant Shift",     juce::NormalisableRange<float>(-12.0f, 12.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("st")));
-    layout.add(std::make_unique<P>("glide_ms",           "Glide",             logRange(0.0f, 2000.0f, 100.0f), 0.0f,   juce::AudioParameterFloatAttributes().withLabel("ms")));
+    layout.add(std::make_unique<P>("formant_shift_st",   "Formant Shift",     juce::NormalisableRange<float>(-12.0f, 12.0f), 0.0f, fSt));
+    layout.add(std::make_unique<P>("glide_ms",           "Glide",             logRange(0.0f, 2000.0f, 100.0f), 0.0f,   fMs));
 
     // --- Amplitude ---
-    layout.add(std::make_unique<P>("amplitude",          "Amplitude",         expRange(0.0f, 1.0f, 0.25f),     1.0f));
-    layout.add(std::make_unique<P>("amp_random_db",      "Amp Random",        juce::NormalisableRange<float>(0.0f, 18.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("dB")));
-    layout.add(std::make_unique<P>("adsr_attack_ms",     "Attack",            logRange(0.0f, 5000.0f, 100.0f), 10.0f,  juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("adsr_decay_ms",      "Decay",             logRange(0.0f, 5000.0f, 200.0f), 100.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("adsr_sustain",       "Sustain",           juce::NormalisableRange<float>(0.0f, 1.0f), 0.8f));
-    layout.add(std::make_unique<P>("adsr_release_ms",    "Release",           logRange(0.0f, 10000.0f, 500.0f), 500.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("velocity_sensitivity","Velocity Sens",    juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f));
-    layout.add(std::make_unique<P>("crossfade_ms",       "Crossfade",         juce::NormalisableRange<float>(0.0f, 50.0f), 5.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
+    layout.add(std::make_unique<P>("amplitude",          "Amplitude",         expRange(0.0f, 1.0f, 0.25f),     1.0f,   fAmp));
+    layout.add(std::make_unique<P>("amp_random_db",      "Amp Random",        juce::NormalisableRange<float>(0.0f, 18.0f), 0.0f, fDb));
+    layout.add(std::make_unique<P>("adsr_attack_ms",     "Attack",            logRange(0.0f, 5000.0f, 100.0f), 10.0f,  fMs));
+    layout.add(std::make_unique<P>("adsr_decay_ms",      "Decay",             logRange(0.0f, 5000.0f, 200.0f), 100.0f, fMs));
+    layout.add(std::make_unique<P>("adsr_sustain",       "Sustain",           juce::NormalisableRange<float>(0.0f, 1.0f), 0.8f, fPct));
+    layout.add(std::make_unique<P>("adsr_release_ms",    "Release",           logRange(0.0f, 10000.0f, 500.0f), 500.0f, fMs));
+    layout.add(std::make_unique<P>("velocity_sensitivity","Velocity Sens",    juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f, fPct));
+    layout.add(std::make_unique<P>("crossfade_ms",       "Crossfade",         juce::NormalisableRange<float>(0.0f, 50.0f), 5.0f, fMs));
 
     // --- Spatialization ---
-    layout.add(std::make_unique<P>("pan",                "Pan",               juce::NormalisableRange<float>(-1.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("pan_random",         "Pan Random",        juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("stereo_width",       "Stereo Width",      juce::NormalisableRange<float>(0.0f, 2.0f), 1.0f));
+    layout.add(std::make_unique<P>("pan",                "Pan",               juce::NormalisableRange<float>(-1.0f, 1.0f), 0.0f, fPan));
+    layout.add(std::make_unique<P>("pan_random",         "Pan Random",        juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("stereo_width",       "Stereo Width",      juce::NormalisableRange<float>(0.0f, 2.0f), 1.0f, fPct));
     layout.add(std::make_unique<PI>("voices",            "Voices",            1, 16, 1));
-    layout.add(std::make_unique<P>("voice_detune_cents", "Voice Detune",      juce::NormalisableRange<float>(0.0f, 100.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("ct")));
+    layout.add(std::make_unique<P>("voice_detune_cents", "Voice Detune",      juce::NormalisableRange<float>(0.0f, 100.0f), 0.0f, fCt));
 
     // --- LFOs (4) ---
     for (int n = 1; n <= 4; ++n)
     {
         auto ns = juce::String(n);
-        layout.add(std::make_unique<P>("lfo" + ns + "_rate_hz",  "LFO " + ns + " Rate",  logRange(0.01f, 100.0f, 5.0f), 1.0f, juce::AudioParameterFloatAttributes().withLabel("Hz")));
+        layout.add(std::make_unique<P>("lfo" + ns + "_rate_hz",  "LFO " + ns + " Rate",  logRange(0.01f, 100.0f, 5.0f), 1.0f, fHz));
         layout.add(std::make_unique<PC>("lfo" + ns + "_shape",   "LFO " + ns + " Shape", juce::StringArray{"Sine","Triangle","Saw Up","Saw Down","Square","S&H","Smooth Rnd"}, 0));
-        layout.add(std::make_unique<P>("lfo" + ns + "_depth",    "LFO " + ns + " Depth", juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-        layout.add(std::make_unique<P>("lfo" + ns + "_phase_deg","LFO " + ns + " Phase", juce::NormalisableRange<float>(0.0f, 360.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("deg")));
+        layout.add(std::make_unique<P>("lfo" + ns + "_depth",    "LFO " + ns + " Depth", juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+        layout.add(std::make_unique<P>("lfo" + ns + "_phase_deg","LFO " + ns + " Phase", juce::NormalisableRange<float>(0.0f, 360.0f), 0.0f, fDeg));
     }
 
     // --- Envelope Modulators (2) ---
     for (int n = 1; n <= 2; ++n)
     {
         auto ns = juce::String(n);
-        layout.add(std::make_unique<P>("envmod" + ns + "_attack_ms",  "EnvMod " + ns + " Attack",  logRange(0.0f, 5000.0f, 100.0f), 10.0f,  juce::AudioParameterFloatAttributes().withLabel("ms")));
-        layout.add(std::make_unique<P>("envmod" + ns + "_decay_ms",   "EnvMod " + ns + " Decay",   logRange(0.0f, 5000.0f, 200.0f), 100.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
-        layout.add(std::make_unique<P>("envmod" + ns + "_sustain",    "EnvMod " + ns + " Sustain", juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f));
-        layout.add(std::make_unique<P>("envmod" + ns + "_release_ms", "EnvMod " + ns + " Release", logRange(0.0f, 10000.0f, 500.0f), 500.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
+        layout.add(std::make_unique<P>("envmod" + ns + "_attack_ms",  "EnvMod " + ns + " Attack",  logRange(0.0f, 5000.0f, 100.0f), 10.0f,  fMs));
+        layout.add(std::make_unique<P>("envmod" + ns + "_decay_ms",   "EnvMod " + ns + " Decay",   logRange(0.0f, 5000.0f, 200.0f), 100.0f, fMs));
+        layout.add(std::make_unique<P>("envmod" + ns + "_sustain",    "EnvMod " + ns + " Sustain", juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f, fPct));
+        layout.add(std::make_unique<P>("envmod" + ns + "_release_ms", "EnvMod " + ns + " Release", logRange(0.0f, 10000.0f, 500.0f), 500.0f, fMs));
     }
 
     // --- Envelope Follower ---
-    layout.add(std::make_unique<P>("ef_attack_ms",       "EF Attack",         logRange(1.0f, 500.0f, 50.0f),  10.0f,  juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("ef_release_ms",      "EF Release",        logRange(1.0f, 2000.0f, 200.0f),100.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
+    layout.add(std::make_unique<P>("ef_attack_ms",       "EF Attack",         logRange(1.0f, 500.0f, 50.0f),  10.0f,  fMs));
+    layout.add(std::make_unique<P>("ef_release_ms",      "EF Release",        logRange(1.0f, 2000.0f, 200.0f),100.0f, fMs));
 
     // --- Filter ---
     layout.add(std::make_unique<PC>("filter_type",       "Filter Type",       juce::StringArray{"Low-Pass","High-Pass","Band-Pass","Notch"}, 0));
-    layout.add(std::make_unique<P>("filter_cutoff_hz",   "Filter Cutoff",     logRange(20.0f, 20000.0f, 1000.0f), 20000.0f, juce::AudioParameterFloatAttributes().withLabel("Hz")));
-    layout.add(std::make_unique<P>("filter_resonance",   "Filter Resonance",  logRange(0.1f, 40.0f, 2.0f),    0.707f));
-    layout.add(std::make_unique<P>("filter_env_depth",   "Filter Env Depth",  juce::NormalisableRange<float>(-20000.0f, 20000.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("Hz")));
-    layout.add(std::make_unique<P>("filter_lfo_depth",   "Filter LFO Depth",  juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("filter_keytrack",    "Filter Keytrack",   juce::NormalisableRange<float>(0.0f, 2.0f), 0.0f));
+    layout.add(std::make_unique<P>("filter_cutoff_hz",   "Filter Cutoff",     logRange(20.0f, 20000.0f, 1000.0f), 20000.0f, fHz));
+    layout.add(std::make_unique<P>("filter_resonance",   "Filter Resonance",  logRange(0.1f, 40.0f, 2.0f),    0.707f, fQ));
+    layout.add(std::make_unique<P>("filter_env_depth",   "Filter Env Depth",  juce::NormalisableRange<float>(-20000.0f, 20000.0f), 0.0f, fHz));
+    layout.add(std::make_unique<P>("filter_lfo_depth",   "Filter LFO Depth",  juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("filter_keytrack",    "Filter Keytrack",   juce::NormalisableRange<float>(0.0f, 2.0f), 0.0f, fPct));
 
     // --- Buffer ---
-    layout.add(std::make_unique<P>("buffer_length_ms",   "Buffer Length",     logRange(10.0f, 60000.0f, 2000.0f), 2000.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
+    layout.add(std::make_unique<P>("buffer_length_ms",   "Buffer Length",     logRange(10.0f, 60000.0f, 2000.0f), 2000.0f, fMs));
     layout.add(std::make_unique<PC>("record_mode",       "Record Mode",       juce::StringArray{"Off","Continuous","One-Shot","Gate"}, 0));
-    layout.add(std::make_unique<P>("record_feedback",    "Record Feedback",   juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("input_gain_db",      "Input Gain",        juce::NormalisableRange<float>(-24.0f, 24.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("dB")));
+    layout.add(std::make_unique<P>("record_feedback",    "Record Feedback",   juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("input_gain_db",      "Input Gain",        juce::NormalisableRange<float>(-24.0f, 24.0f), 0.0f, fDb));
 
     // --- Effects ---
-    layout.add(std::make_unique<P>("fx_drive",           "Drive",             juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
+    layout.add(std::make_unique<P>("fx_drive",           "Drive",             juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
     layout.add(std::make_unique<PC>("fx_ws_type",        "Waveshaper Type",   juce::StringArray{"Tanh","Soft Clip"}, 0));
     for (int n = 1; n <= 4; ++n)
     {
         auto ns = juce::String(n);
         const float defaultFreqs[] = { 100.0f, 500.0f, 2000.0f, 8000.0f };
-        layout.add(std::make_unique<P>("fx_eq" + ns + "_freq", "EQ " + ns + " Freq", logRange(20.0f, 20000.0f, 1000.0f), defaultFreqs[n-1], juce::AudioParameterFloatAttributes().withLabel("Hz")));
-        layout.add(std::make_unique<P>("fx_eq" + ns + "_gain", "EQ " + ns + " Gain", juce::NormalisableRange<float>(-18.0f, 18.0f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("dB")));
-        layout.add(std::make_unique<P>("fx_eq" + ns + "_q",    "EQ " + ns + " Q",    logRange(0.1f, 10.0f, 0.707f), 0.707f));
+        layout.add(std::make_unique<P>("fx_eq" + ns + "_freq", "EQ " + ns + " Freq", logRange(20.0f, 20000.0f, 1000.0f), defaultFreqs[n-1], fHz));
+        layout.add(std::make_unique<P>("fx_eq" + ns + "_gain", "EQ " + ns + " Gain", juce::NormalisableRange<float>(-18.0f, 18.0f), 0.0f, fDb));
+        layout.add(std::make_unique<P>("fx_eq" + ns + "_q",    "EQ " + ns + " Q",    logRange(0.1f, 10.0f, 0.707f), 0.707f, fQ));
     }
-    layout.add(std::make_unique<P>("fx_chorus_rate",     "Chorus Rate",       logRange(0.01f, 10.0f, 0.5f),   0.5f,  juce::AudioParameterFloatAttributes().withLabel("Hz")));
-    layout.add(std::make_unique<P>("fx_chorus_depth",    "Chorus Depth",      juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("fx_chorus_mix",      "Chorus Mix",        juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("fx_delay_time_ms",   "Delay Time",        logRange(1.0f, 2000.0f, 250.0f), 250.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
-    layout.add(std::make_unique<P>("fx_delay_feedback",  "Delay Feedback",    juce::NormalisableRange<float>(0.0f, 0.99f), 0.0f));
-    layout.add(std::make_unique<P>("fx_delay_mix",       "Delay Mix",         juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
+    layout.add(std::make_unique<P>("fx_chorus_rate",     "Chorus Rate",       logRange(0.01f, 10.0f, 0.5f),   0.5f,  fHz));
+    layout.add(std::make_unique<P>("fx_chorus_depth",    "Chorus Depth",      juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("fx_chorus_mix",      "Chorus Mix",        juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("fx_delay_time_ms",   "Delay Time",        logRange(1.0f, 2000.0f, 250.0f), 250.0f, fMs));
+    layout.add(std::make_unique<P>("fx_delay_feedback",  "Delay Feedback",    juce::NormalisableRange<float>(0.0f, 0.99f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("fx_delay_mix",       "Delay Mix",         juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
     layout.add(std::make_unique<PB>("fx_delay_pingpong", "Delay Ping-Pong",   false));
-    layout.add(std::make_unique<P>("fx_reverb_room",     "Reverb Room",       juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f));
-    layout.add(std::make_unique<P>("fx_reverb_damp",     "Reverb Damp",       juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f));
-    layout.add(std::make_unique<P>("fx_reverb_mix",      "Reverb Mix",        juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f));
-    layout.add(std::make_unique<P>("fx_limiter_thresh",  "Limiter Threshold", juce::NormalisableRange<float>(-60.0f, 0.0f), -0.1f, juce::AudioParameterFloatAttributes().withLabel("dB")));
-    layout.add(std::make_unique<P>("fx_limiter_release", "Limiter Release",   logRange(1.0f, 2000.0f, 100.0f), 100.0f, juce::AudioParameterFloatAttributes().withLabel("ms")));
+    layout.add(std::make_unique<P>("fx_reverb_room",     "Reverb Room",       juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f, fPct));
+    layout.add(std::make_unique<P>("fx_reverb_damp",     "Reverb Damp",       juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f, fPct));
+    layout.add(std::make_unique<P>("fx_reverb_mix",      "Reverb Mix",        juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
+    layout.add(std::make_unique<P>("fx_limiter_thresh",  "Limiter Threshold", juce::NormalisableRange<float>(-60.0f, 0.0f), -0.1f, fDb));
+    layout.add(std::make_unique<P>("fx_limiter_release", "Limiter Release",   logRange(1.0f, 2000.0f, 100.0f), 100.0f, fMs));
 
     // --- Output ---
-    layout.add(std::make_unique<P>("master_volume_db",   "Master Volume",     expRange(-100.0f, 6.0f, 0.25f), 0.0f, juce::AudioParameterFloatAttributes().withLabel("dB")));
-    layout.add(std::make_unique<P>("dry_wet",            "Dry/Wet",           juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f));
+    layout.add(std::make_unique<P>("master_volume_db",   "Master Volume",     expRange(-60.0f, 6.0f, 0.3f), 0.0f, fDb));
+    layout.add(std::make_unique<P>("dry_wet",            "Dry/Wet",           juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f, fPct));
     layout.add(std::make_unique<PB>("dc_filter",         "DC Filter",         true));
     layout.add(std::make_unique<PC>("anti_aliasing",     "Anti-Aliasing",     juce::StringArray{"Off","Low","High"}, 1));
 

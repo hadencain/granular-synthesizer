@@ -50,7 +50,7 @@ private:
     ModSection         modSection;
 
     // LFO column footer — master out knobs
-    juce::Slider masterVolSlider { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
+    juce::Slider masterVolSlider { juce::Slider::LinearVertical, juce::Slider::TextBoxBelow };
     juce::Label  masterVolLabel;
     juce::Slider dryWetSlider   { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
     juce::Label  dryWetLabel;
