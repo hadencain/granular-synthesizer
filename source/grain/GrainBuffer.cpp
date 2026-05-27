@@ -31,6 +31,7 @@ bool GrainBuffer::loadFile(const juce::File& file, juce::AudioFormatManager& for
 
     // Resample to host sample rate if needed — simple linear resample
     // (For release quality, replace with juce::ResamplingAudioSource)
+    usedLength.store(0, std::memory_order_release);   // audio thread returns silence during load
     backingBuffer.clear();
     const int destLength = juce::jmin(maxLengthSamples,
                                       static_cast<int>(srcLength)); // same-rate fast path
@@ -40,7 +41,7 @@ bool GrainBuffer::loadFile(const juce::File& file, juce::AudioFormatManager& for
         backingBuffer.copyFrom(ch, 0, temp, srcCh, 0, destLength);
     }
 
-    usedLength.store(destLength);
+    usedLength.store(destLength, std::memory_order_release);
     writeHead.store(0);
     oneShotFilled = false;
     setSourceMode(SourceMode::File);
