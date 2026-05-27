@@ -48,4 +48,6 @@ private:
     ModMatrixGrid        modGrid;
     juce::Component      contentComp;
     juce::Viewport       viewport;
+
+    juce::Label routingLabel, sourcesLabel;
 };

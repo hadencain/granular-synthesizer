@@ -9,13 +9,6 @@ ModSection::LFOStrip::LFOStrip(juce::AudioProcessorValueTreeState& apvts, int n)
     depth.setLabel("Depth");
     phase.setLabel("Phase");
 
-    rate.getSlider().setTextValueSuffix(" Hz");
-    rate.getSlider().setNumDecimalPlacesToDisplay(2);
-    depth.getSlider().setTextValueSuffix("%");
-    depth.getSlider().setNumDecimalPlacesToDisplay(1);
-    phase.getSlider().setTextValueSuffix("\xc2\xb0");
-    phase.getSlider().setNumDecimalPlacesToDisplay(0);
-
     rateAtt  = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "lfo" + ns + "_rate_hz",  rate.getSlider());
     depthAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "lfo" + ns + "_depth",    depth.getSlider());
     phaseAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "lfo" + ns + "_phase_deg",phase.getSlider());
@@ -62,15 +55,6 @@ ModSection::EnvModStrip::EnvModStrip(juce::AudioProcessorValueTreeState& apvts, 
     sustain.setLabel("Sus");
     release.setLabel("Rel");
 
-    attack.getSlider().setTextValueSuffix(" ms");
-    attack.getSlider().setNumDecimalPlacesToDisplay(0);
-    decay.getSlider().setTextValueSuffix(" ms");
-    decay.getSlider().setNumDecimalPlacesToDisplay(0);
-    sustain.getSlider().setTextValueSuffix("%");
-    sustain.getSlider().setNumDecimalPlacesToDisplay(1);
-    release.getSlider().setTextValueSuffix(" ms");
-    release.getSlider().setNumDecimalPlacesToDisplay(0);
-
     atkAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         apvts, "envmod" + ns + "_attack_ms",  attack.getSlider());
     decAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -116,10 +100,6 @@ ModSection::ModSection(juce::AudioProcessorValueTreeState& apvts, ModMatrix& mod
     efLabel.setText("FOLLOWER", juce::dontSendNotification);
     efAttack.setLabel("Atk");
     efRelease.setLabel("Rel");
-    efAttack.getSlider().setTextValueSuffix(" ms");
-    efAttack.getSlider().setNumDecimalPlacesToDisplay(0);
-    efRelease.getSlider().setTextValueSuffix(" ms");
-    efRelease.getSlider().setNumDecimalPlacesToDisplay(0);
     efAtkAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         apvts, "ef_attack_ms",  efAttack.getSlider());
     efRelAtt = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -129,6 +109,16 @@ ModSection::ModSection(juce::AudioProcessorValueTreeState& apvts, ModMatrix& mod
     contentComp.addAndMakeVisible(efRelease);
 
     contentComp.addAndMakeVisible(modGrid);
+
+    routingLabel.setText("ROUTING", juce::dontSendNotification);
+    routingLabel.setFont(juce::Font(9.0f, juce::Font::bold));
+    routingLabel.setColour(juce::Label::textColourId, juce::Colour(0xff808080));
+    contentComp.addAndMakeVisible(routingLabel);
+
+    sourcesLabel.setText("SOURCES", juce::dontSendNotification);
+    sourcesLabel.setFont(juce::Font(9.0f, juce::Font::bold));
+    sourcesLabel.setColour(juce::Label::textColourId, juce::Colour(0xff808080));
+    contentComp.addAndMakeVisible(sourcesLabel);
 
     viewport.setViewedComponent(&contentComp, false);
     viewport.setScrollBarsShown(true, false);
@@ -144,17 +134,30 @@ void ModSection::resized()
     const int envH      = 90;
     const int followerH = 90;
     const int matrixH   = 220;
+    const int lblH      = 14;
     const int gap       = 6;
 
     const int totalH = 4 +
+        lblH + 4 +
+        matrixH + gap +
+        lblH + 4 +
         4 * (stripH + gap) +
         2 * (envH   + gap) +
-        followerH + gap +
-        matrixH + gap;
+        followerH + gap;
 
     contentComp.setBounds(0, 0, getWidth(), totalH);
 
     int y = 4;
+
+    // Routing grid at top — immediately visible
+    routingLabel.setBounds(4, y, w, lblH);
+    y += lblH + 4;
+    modGrid.setBounds(4, y, w, matrixH);
+    y += matrixH + gap;
+
+    // LFO / ENV sources below
+    sourcesLabel.setBounds(4, y, w, lblH);
+    y += lblH + 4;
 
     for (auto& strip : lfoStrips)
     {
@@ -168,11 +171,8 @@ void ModSection::resized()
         y += envH + gap;
     }
 
-    efLabel.setBounds(4, y, 80, 14);
+    efLabel.setBounds(4, y, 80, lblH);
     const int kW = 70, kH = followerH - 18;
     efAttack.setBounds (4,            y + 18, kW, kH);
     efRelease.setBounds(4 + kW + gap, y + 18, kW, kH);
-    y += followerH + gap;
-
-    modGrid.setBounds(4, y, w, matrixH);
 }
