@@ -9,6 +9,7 @@ WaveformDisplay::WaveformDisplay(juce::AudioFormatManager& fm)
 
 WaveformDisplay::~WaveformDisplay()
 {
+    fileChooser.reset();
     stopTimer();
 }
 
