@@ -124,7 +124,25 @@ void PluginEditor::mouseDown(const juce::MouseEvent& e)
 
 void PluginEditor::randomizeAllParams()
 {
-    static const juce::StringArray kSkip { "master_volume_db", "dry_wet" };
+    // Skip params that damage the mix without contributing to texture
+    static const juce::StringArray kSkip {
+        "master_volume_db", "dry_wet", "input_gain_db",
+        "pan", "pan_random",
+        "spatial_width", "spatial_stereo", "voices",
+        "record_mode", "record_feedback", "buffer_length_ms",
+        "fx_reverb_mix", "fx_delay_mix", "fx_chorus_mix",
+        "lfo1_depth", "lfo2_depth", "lfo3_depth", "lfo4_depth",
+        "freeze", "dc_filter", "anti_aliasing",
+        "filter_cutoff_hz"   // going near 20 Hz silences the output
+    };
+
+    // Constrained params: normalized [lo, hi] ranges for musical safety
+    struct Constraint { const char* id; float lo, hi; };
+    static const Constraint kConstrained[] = {
+        { "pitch_shift_st",    0.375f, 0.625f },  // ±12st within the ±48st range
+        { "grain_probability", 0.5f,   1.0f   },  // never below 50%: too sparse otherwise
+    };
+
     auto& rng = juce::Random::getSystemRandom();
 
     for (auto* p : processor.getParameters())
@@ -132,7 +150,19 @@ void PluginEditor::randomizeAllParams()
         if (auto* rp = dynamic_cast<juce::RangedAudioParameter*>(p))
         {
             if (kSkip.contains(rp->paramID)) continue;
-            rp->setValueNotifyingHost(rng.nextFloat());
+
+            bool constrained = false;
+            for (const auto& c : kConstrained)
+            {
+                if (rp->paramID == c.id)
+                {
+                    rp->setValueNotifyingHost(c.lo + rng.nextFloat() * (c.hi - c.lo));
+                    constrained = true;
+                    break;
+                }
+            }
+            if (!constrained)
+                rp->setValueNotifyingHost(rng.nextFloat());
         }
     }
 }
