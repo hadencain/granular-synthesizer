@@ -90,9 +90,8 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     addAndMakeVisible(dryWetSlider);
     addAndMakeVisible(dryWetLabel);
 
-    bufferSection.onLoadFile = [&](const juce::File& file) {
+    waveformDisplay.onLoadFile = [&](const juce::File& file) {
         p.getGrainBuffer().loadFile(file, p.getFormatManager());
-        waveformDisplay.loadFile(file);
     };
 
     startTimerHz(10);
