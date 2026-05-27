@@ -54,7 +54,6 @@ target_sources(Granulator PRIVATE
     source/ui/sections/FilterSection.cpp
     source/ui/sections/BufferSection.cpp
     source/ui/sections/EffectsSection.cpp
-    source/ui/sections/RecordSection.cpp
 )
 
 target_compile_definitions(Granulator PUBLIC
