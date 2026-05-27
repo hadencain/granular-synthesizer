@@ -22,7 +22,6 @@ PluginEditor::PluginEditor(PluginProcessor& p)
       filterSection   (p.getAPVTS()),
       bufferSection   (p.getAPVTS()),
       fxSection       (p.getAPVTS()),
-      recordSection   (p),
       modSection      (p.getAPVTS(), p.getModMatrix()),
       waveformDisplay (p.getFormatManager()),
       masterVolAtt    (p.getAPVTS(), "master_volume_db", masterVolSlider),
@@ -63,7 +62,6 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     addAndMakeVisible(filterSection);
     addAndMakeVisible(bufferSection);
     addAndMakeVisible(fxSection);
-    addAndMakeVisible(recordSection);
     addAndMakeVisible(modSection);
 
     masterVolLabel.setText("VOL", juce::dontSendNotification);
@@ -212,11 +210,10 @@ void PluginEditor::paint(juce::Graphics& g)
     // Section color bars — 2px left edge of each section
     const int grainH  = static_cast<int>(kBodyH * 0.50f);
     const int pitchH  = kBodyH / 2;
-    const int spaceH  = static_cast<int>(kBodyH * 0.28f);
-    const int filterH = static_cast<int>(kBodyH * 0.36f);
+    const int spaceH  = static_cast<int>(kBodyH * 0.22f);
+    const int filterH = static_cast<int>(kBodyH * 0.50f);
     const int bufferH = kBodyH - spaceH - filterH;
-    const int fxH     = static_cast<int>(kBodyH * 0.70f);
-    const int recH    = kBodyH - fxH;
+    const int fxH     = kBodyH;
 
     struct Bar { int x, y, h; juce::Colour colour; };
     const Bar bars[] = {
@@ -228,7 +225,6 @@ void PluginEditor::paint(juce::Graphics& g)
         { kColW * 2, kBodyY + spaceH,              filterH,         juce::Colour(0xff262626) }, // Filter
         { kColW * 2, kBodyY + spaceH + filterH,    bufferH,         juce::Colour(0xff232323) }, // Buffer
         { kColW * 3, kBodyY,                       fxH,             juce::Colour(0xff202020) }, // Effects
-        { kColW * 3, kBodyY + fxH,                 recH,            juce::Colour(0xff1e1e1e) }, // Record
         { kMainW,    kBodyY,                       kBodyH,          juce::Colour(0xff1e1e1e) }, // Modulation
     };
     for (const auto& bar : bars)
@@ -267,19 +263,16 @@ void PluginEditor::resized()
 
     // ── Column 3: Space + Filter + Buffer ───────────────────────────────────
     const int c3x      = kColW * 2;
-    const int spaceH   = static_cast<int>(kBodyH * 0.28f);
-    const int filterH  = static_cast<int>(kBodyH * 0.36f);
+    const int spaceH   = static_cast<int>(kBodyH * 0.22f);
+    const int filterH  = static_cast<int>(kBodyH * 0.50f);
     const int bufferH  = kBodyH - spaceH - filterH;
     spatialSection.setBounds(c3x + pad, kBodyY + kSLH,                   kColW - pad * 2, spaceH - kSLH - pad);
     filterSection.setBounds(c3x + pad, kBodyY + spaceH + kSLH,           kColW - pad * 2, filterH - kSLH - pad);
     bufferSection.setBounds(c3x + pad, kBodyY + spaceH + filterH + kSLH, kColW - pad * 2, bufferH - kSLH - pad);
 
-    // ── Column 4: FX + Record ───────────────────────────────────────────────
-    const int c4x   = kColW * 3;
-    const int fxH   = static_cast<int>(kBodyH * 0.70f);
-    const int recH  = kBodyH - fxH;
-    fxSection.setBounds(c4x + pad,  kBodyY + kSLH,      kColW - pad * 2, fxH - kSLH - pad);
-    recordSection.setBounds(c4x + pad, kBodyY + fxH + kSLH, kColW - pad * 2, recH - kSLH - pad);
+    // ── Column 4: FX (full column) ──────────────────────────────────────────
+    const int c4x = kColW * 3;
+    fxSection.setBounds(c4x + pad, kBodyY + kSLH, kColW - pad * 2, kBodyH - kSLH - pad);
 
     // ── Column 5: Mod (LFO strips) + output footer ──────────────────────────
     const int modH  = kBodyH - kLfoFootH;

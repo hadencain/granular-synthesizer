@@ -12,7 +12,6 @@
 #include "ui/sections/FilterSection.h"
 #include "ui/sections/BufferSection.h"
 #include "ui/sections/EffectsSection.h"
-#include "ui/sections/RecordSection.h"
 
 class PluginEditor : public juce::AudioProcessorEditor,
                      private juce::Timer
@@ -48,7 +47,6 @@ private:
     FilterSection      filterSection;
     BufferSection      bufferSection;
     EffectsSection     fxSection;
-    RecordSection      recordSection;
     ModSection         modSection;
 
     // LFO column footer — master out knobs
