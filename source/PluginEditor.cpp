@@ -125,7 +125,7 @@ void PluginEditor::randomizeAllParams()
     static const juce::StringArray kSkip {
         "master_volume_db", "dry_wet", "input_gain_db",
         "pan", "pan_random",
-        "spatial_width", "spatial_stereo", "voices",
+        "stereo_width", "voices",
         "record_mode", "record_feedback", "buffer_length_ms",
         "fx_reverb_mix", "fx_delay_mix", "fx_chorus_mix",
         "lfo1_depth", "lfo2_depth", "lfo3_depth", "lfo4_depth",
