@@ -10,6 +10,7 @@ public:
 
     // Returns current output sample in [-1, +1], advances phase
     float process() noexcept;
+    float processBlock(int numSamples) noexcept;
 
     void setRate(float hz) noexcept     { rateHz = hz; }
     void setShape(LFOShape s) noexcept  { shape = s; }
