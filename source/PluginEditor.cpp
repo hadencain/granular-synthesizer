@@ -191,16 +191,16 @@ void PluginEditor::paint(juce::Graphics& g)
 
     struct Bar { int x, y, h; juce::Colour colour; };
     const Bar bars[] = {
-        { 0,         kBodyY,                       grainH,          juce::Colour(0xffb08040) }, // Grain Core
-        { 0,         kBodyY + grainH,              kBodyH - grainH, juce::Colour(0xff707870) }, // Playhead
-        { kColW,     kBodyY,                       pitchH,          juce::Colour(0xffd06030) }, // Pitch
-        { kColW,     kBodyY + pitchH,              kBodyH - pitchH, juce::Colour(0xffc05535) }, // Amplitude
-        { kColW * 2, kBodyY,                       spaceH,          juce::Colour(0xff4080b0) }, // Spatial
-        { kColW * 2, kBodyY + spaceH,              filterH,         juce::Colour(0xff30a0a0) }, // Filter
-        { kColW * 2, kBodyY + spaceH + filterH,    bufferH,         juce::Colour(0xff607060) }, // Buffer
-        { kColW * 3, kBodyY,                       fxH,             juce::Colour(0xff5060c0) }, // Effects
-        { kColW * 3, kBodyY + fxH,                 recH,            juce::Colour(0xffc03030) }, // Record
-        { kMainW,    kBodyY,                       kBodyH,          juce::Colour(0xff8050b8) }, // Modulation
+        { 0,         kBodyY,                       grainH,          juce::Colour(0xff3c3c3c) }, // Grain Core
+        { 0,         kBodyY + grainH,              kBodyH - grainH, juce::Colour(0xff363636) }, // Playhead
+        { kColW,     kBodyY,                       pitchH,          juce::Colour(0xff323232) }, // Pitch
+        { kColW,     kBodyY + pitchH,              kBodyH - pitchH, juce::Colour(0xff2e2e2e) }, // Amplitude
+        { kColW * 2, kBodyY,                       spaceH,          juce::Colour(0xff2a2a2a) }, // Spatial
+        { kColW * 2, kBodyY + spaceH,              filterH,         juce::Colour(0xff262626) }, // Filter
+        { kColW * 2, kBodyY + spaceH + filterH,    bufferH,         juce::Colour(0xff232323) }, // Buffer
+        { kColW * 3, kBodyY,                       fxH,             juce::Colour(0xff202020) }, // Effects
+        { kColW * 3, kBodyY + fxH,                 recH,            juce::Colour(0xff1e1e1e) }, // Record
+        { kMainW,    kBodyY,                       kBodyH,          juce::Colour(0xff1e1e1e) }, // Modulation
     };
     for (const auto& bar : bars)
     {
