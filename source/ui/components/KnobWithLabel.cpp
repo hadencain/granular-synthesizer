@@ -8,7 +8,11 @@ KnobWithLabel::KnobWithLabel()
     label.setJustificationType(juce::Justification::centred);
     label.setFont(juce::Font(9.5f, juce::Font::bold));
     label.setColour(juce::Label::textColourId, juce::Colour(0xff909090));
-    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 14);
+    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 14);
+
+    slider.setColour(juce::Slider::textBoxOutlineColourId,    juce::Colours::transparentBlack);
+    slider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
+    slider.setColour(juce::Slider::textBoxTextColourId,       juce::Colour(0xff909090));
 }
 
 void KnobWithLabel::setLabel(const juce::String& text)

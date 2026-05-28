@@ -19,45 +19,6 @@ AmplitudeSection::AmplitudeSection(juce::AudioProcessorValueTreeState& apvts)
     sustain.setLabel("Sustain");
     release.setLabel("Release");
 
-    amplitude.getSlider().textFromValueFunction = [](double v) -> juce::String {
-        if (v <= 0.0001) return "-inf dB";
-        return juce::String(20.0 * std::log10(v), 1) + " dB";
-    };
-    amplitude.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
-        auto s = t.upToFirstOccurrenceOf(" dB", false, true).trim();
-        if (s.containsIgnoreCase("inf")) return 0.0;
-        return std::pow(10.0, s.getDoubleValue() / 20.0);
-    };
-
-    ampRandom.getSlider().setTextValueSuffix(" dB");
-    ampRandom.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    velSens.getSlider().textFromValueFunction = [](double v) -> juce::String {
-        return juce::String(juce::roundToInt(v * 100)) + "%";
-    };
-    velSens.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
-        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
-    };
-
-    crossfade.getSlider().setTextValueSuffix(" ms");
-    crossfade.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    attack.getSlider().setTextValueSuffix(" ms");
-    attack.getSlider().setNumDecimalPlacesToDisplay(0);
-
-    decay.getSlider().setTextValueSuffix(" ms");
-    decay.getSlider().setNumDecimalPlacesToDisplay(0);
-
-    sustain.getSlider().textFromValueFunction = [](double v) -> juce::String {
-        return juce::String(juce::roundToInt(v * 100)) + "%";
-    };
-    sustain.getSlider().valueFromTextFunction = [](const juce::String& t) -> double {
-        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
-    };
-
-    release.getSlider().setTextValueSuffix(" ms");
-    release.getSlider().setNumDecimalPlacesToDisplay(0);
-
     for (auto* c : { &amplitude, &ampRandom, &velSens, &crossfade,
                      &attack, &decay, &sustain, &release })
         addAndMakeVisible(c);

@@ -15,24 +15,6 @@ PitchSection::PitchSection(juce::AudioProcessorValueTreeState& apvts)
     formantShift.setLabel("Formant");
     glide.setLabel("Glide");
 
-    pitchShift.getSlider().setTextValueSuffix(" st");
-    pitchShift.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    detune.getSlider().setTextValueSuffix(" ct");
-    detune.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    pitchRandom.getSlider().setTextValueSuffix(" st");
-    pitchRandom.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    playbackRate.getSlider().setTextValueSuffix("x");
-    playbackRate.getSlider().setNumDecimalPlacesToDisplay(2);
-
-    formantShift.getSlider().setTextValueSuffix(" st");
-    formantShift.getSlider().setNumDecimalPlacesToDisplay(1);
-
-    glide.getSlider().setTextValueSuffix(" ms");
-    glide.getSlider().setNumDecimalPlacesToDisplay(0);
-
     transposeLabel.setText("Transpose", juce::dontSendNotification);
     quantizeLabel.setText("Quantize", juce::dontSendNotification);
 

@@ -21,25 +21,6 @@ PlayheadSection::PlayheadSection(juce::AudioProcessorValueTreeState& apvts)
     scrub.setLabel("Scrub");
     prob.setLabel("Prob");
 
-    auto pct = [](juce::Slider& s) {
-        s.textFromValueFunction = [](double v) -> juce::String {
-            return juce::String(juce::roundToInt(v * 100)) + "%";
-        };
-        s.valueFromTextFunction = [](const juce::String& t) -> double {
-            return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
-        };
-    };
-
-    pct(position.getSlider());
-    spray.getSlider().setTextValueSuffix(" ms");
-    spray.getSlider().setNumDecimalPlacesToDisplay(1);
-    scanRate.getSlider().setTextValueSuffix(" Hz");
-    scanRate.getSlider().setNumDecimalPlacesToDisplay(2);
-    pct(loopStart.getSlider());
-    pct(loopEnd.getSlider());
-    pct(scrub.getSlider());
-    pct(prob.getSlider());
-
     scanShapeLabel.setText("Scan Shape", juce::dontSendNotification);
 
     for (auto* c : { &position, &spray, &scanRate, &loopStart, &loopEnd, &scrub })
