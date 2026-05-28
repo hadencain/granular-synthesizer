@@ -41,45 +41,6 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
     limiterRelease.setLabel("Rel");  att(limiterRelease,"fx_limiter_release");
     pingPongAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, "fx_delay_pingpong", pingPongBtn);
 
-    auto pct = [](juce::Slider& s) {
-        s.textFromValueFunction = [](double v) -> juce::String {
-            return juce::String(juce::roundToInt(v * 100)) + "%";
-        };
-        s.valueFromTextFunction = [](const juce::String& t) -> double {
-            return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
-        };
-    };
-
-    pct(drive.getSlider());
-
-    for (int i = 0; i < 4; ++i)
-    {
-        eq[i].freq.getSlider().setTextValueSuffix(" Hz");
-        eq[i].freq.getSlider().setNumDecimalPlacesToDisplay(0);
-        eq[i].gain.getSlider().setTextValueSuffix(" dB");
-        eq[i].gain.getSlider().setNumDecimalPlacesToDisplay(1);
-        eq[i].q.getSlider().setNumDecimalPlacesToDisplay(2);
-    }
-
-    chorusRate.getSlider().setTextValueSuffix(" Hz");
-    chorusRate.getSlider().setNumDecimalPlacesToDisplay(2);
-    pct(chorusDepth.getSlider());
-    pct(chorusMix.getSlider());
-
-    delayTime.getSlider().setTextValueSuffix(" ms");
-    delayTime.getSlider().setNumDecimalPlacesToDisplay(0);
-    pct(delayFeedback.getSlider());
-    pct(delayMix.getSlider());
-
-    pct(reverbRoom.getSlider());
-    pct(reverbDamp.getSlider());
-    pct(reverbMix.getSlider());
-
-    limiterThresh.getSlider().setTextValueSuffix(" dB");
-    limiterThresh.getSlider().setNumDecimalPlacesToDisplay(1);
-    limiterRelease.getSlider().setTextValueSuffix(" ms");
-    limiterRelease.getSlider().setNumDecimalPlacesToDisplay(0);
-
     addAndMakeVisible(drive);
     addAndMakeVisible(wsTypeBox); addAndMakeVisible(wsLabel);
     for (auto& band : eq) { addAndMakeVisible(band.freq); addAndMakeVisible(band.gain); addAndMakeVisible(band.q); }
@@ -93,7 +54,7 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
 
 void EffectsSection::resized()
 {
-    const int kW = 60, kH = 68, gap = 6, startX = 6;
+    const int kW = 60, kH = 54, gap = 4, startX = 6;
     int y = 4;
 
     // Row 0: Drive + WS type
