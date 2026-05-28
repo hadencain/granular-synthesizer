@@ -13,9 +13,9 @@ void FilterCurveDisplay::timerCallback()
                              .convertFrom0to1(apvts.getParameter("filter_cutoff_hz")->getValue());
     const float res    = apvts.getParameterRange("filter_resonance")
                              .convertFrom0to1(apvts.getParameter("filter_resonance")->getValue());
-    const int   type   = juce::roundToInt(
-                             apvts.getParameterRange("filter_type")
-                                 .convertFrom0to1(apvts.getParameter("filter_type")->getValue()));
+    int type = 0;
+    if (auto* p = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("filter_type")))
+        type = p->getIndex();
 
     if (std::abs(cutoff - cachedCutoff) > 0.5f ||
         std::abs(res    - cachedRes)    > 0.001f ||
