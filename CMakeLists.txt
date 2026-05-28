@@ -44,6 +44,8 @@ target_sources(Granulator PRIVATE
     source/ui/GranularLookAndFeel.cpp
     source/ui/components/KnobWithLabel.cpp
     source/ui/components/WaveformDisplay.cpp
+    source/ui/components/FilterCurveDisplay.cpp
+    source/ui/components/ReverbBlobDisplay.cpp
     source/ui/components/ModMatrixGrid.cpp
     source/ui/sections/GrainCoreSection.cpp
     source/ui/sections/PlayheadSection.cpp

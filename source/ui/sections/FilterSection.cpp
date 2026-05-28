@@ -1,7 +1,8 @@
 #include "FilterSection.h"
 
 FilterSection::FilterSection(juce::AudioProcessorValueTreeState& apvts)
-    : cutoffAtt  (apvts, "filter_cutoff_hz",  cutoff.getSlider()),
+    : curveDisplay(apvts),
+      cutoffAtt  (apvts, "filter_cutoff_hz",  cutoff.getSlider()),
       resAtt     (apvts, "filter_resonance",   resonance.getSlider()),
       envDepthAtt(apvts, "filter_env_depth",   envDepth.getSlider()),
       lfoDepthAtt(apvts, "filter_lfo_depth",   lfoDepth.getSlider()),
@@ -18,6 +19,7 @@ FilterSection::FilterSection(juce::AudioProcessorValueTreeState& apvts)
     typeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         apvts, "filter_type", filterTypeBox);
 
+    addAndMakeVisible(curveDisplay);
     for (auto* c : { &cutoff, &resonance, &envDepth, &lfoDepth, &keytrack })
         addAndMakeVisible(c);
     addAndMakeVisible(filterTypeBox);
@@ -26,12 +28,19 @@ FilterSection::FilterSection(juce::AudioProcessorValueTreeState& apvts)
 
 void FilterSection::resized()
 {
-    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 8;
-    const int row2Y = startY + kH + gap;
+    const int kW = 70, kH = 72, gap = 6, startX = 8, startY = 6;
+    const int fullW = getWidth() - startX * 2;
 
-    filterTypeLabel.setBounds(startX, startY, 110, 14);
-    filterTypeBox.setBounds(startX, startY + 16, 110, 22);
+    // Frequency response curve
+    curveDisplay.setBounds(startX, startY, fullW, 58);
 
+    // Type label + combo — compact row below curve
+    const int typeY = startY + 58 + gap;
+    filterTypeLabel.setBounds(startX, typeY, 50, 12);
+    filterTypeBox.setBounds(startX + 52, typeY - 2, 110, 20);
+
+    // Knob rows
+    const int row2Y = typeY + 22 + gap;
     int x = startX;
     for (auto* c : { &cutoff, &resonance, &envDepth })
     { c->setBounds(x, row2Y, kW, kH); x += kW + gap; }

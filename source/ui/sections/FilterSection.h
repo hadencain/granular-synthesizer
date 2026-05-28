@@ -2,6 +2,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "../components/KnobWithLabel.h"
+#include "../components/FilterCurveDisplay.h"
 
 class FilterSection : public juce::Component
 {
@@ -10,6 +11,8 @@ public:
     void resized() override;
 
 private:
+    FilterCurveDisplay curveDisplay;
+
     KnobWithLabel cutoff, resonance, envDepth, lfoDepth, keytrack;
     juce::ComboBox filterTypeBox;
     juce::Label    filterTypeLabel;

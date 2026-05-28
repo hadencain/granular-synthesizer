@@ -1,6 +1,7 @@
 #include "EffectsSection.h"
 
 EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
+    : reverbBlob(apvts)
 {
     auto att = [&](KnobWithLabel& k, const juce::String& id) {
         atts.push_back(std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -50,6 +51,7 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
                      &limiterThresh, &limiterRelease })
         addAndMakeVisible(c);
     addAndMakeVisible(pingPongBtn);
+    addAndMakeVisible(reverbBlob);
 }
 
 void EffectsSection::resized()
@@ -90,10 +92,11 @@ void EffectsSection::resized()
     pingPongBtn.setBounds(x, y + kH / 2 - 12, 80, 24);
     y += kH + gap;
 
-    // Reverb
+    // Reverb — 3 knobs + blob to the right
     x = startX;
     for (auto* c : { &reverbRoom, &reverbDamp, &reverbMix })
     { c->setBounds(x, y, kW, kH); x += kW + gap; }
+    reverbBlob.setBounds(x, y + 4, 66, kH - 8);
     y += kH + gap;
 
     // Limiter
