@@ -5,6 +5,11 @@ WaveformDisplay::WaveformDisplay(juce::AudioFormatManager& fm)
 {
     startTimerHz(20);
     setMouseCursor(juce::MouseCursor::CrosshairCursor);
+
+    addChildComponent(replaceBtn);
+    replaceBtn.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff303030));
+    replaceBtn.setColour(juce::TextButton::textColourOffId, juce::Colour(0xffaaaaaa));
+    replaceBtn.onClick = [this] { launchFileBrowser(); };
 }
 
 WaveformDisplay::~WaveformDisplay()
@@ -13,11 +18,17 @@ WaveformDisplay::~WaveformDisplay()
     stopTimer();
 }
 
-void WaveformDisplay::resized() {}
+void WaveformDisplay::resized()
+{
+    const int btnW = 64, btnH = 20, margin = 6;
+    replaceBtn.setBounds(getWidth() - btnW - margin,
+                         getHeight() - btnH - margin, btnW, btnH);
+}
 
 void WaveformDisplay::loadFile(const juce::File& file)
 {
     thumbnail.setSource(new juce::FileInputSource(file));
+    replaceBtn.setVisible(true);
 }
 
 void WaveformDisplay::timerCallback()
