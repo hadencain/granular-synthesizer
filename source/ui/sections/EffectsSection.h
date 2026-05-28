@@ -2,6 +2,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "../components/KnobWithLabel.h"
+#include "../components/ReverbBlobDisplay.h"
 
 class EffectsSection : public juce::Component
 {
@@ -22,6 +23,7 @@ private:
     KnobWithLabel chorusRate, chorusDepth, chorusMix;
     KnobWithLabel delayTime, delayFeedback, delayMix;
     KnobWithLabel reverbRoom, reverbDamp, reverbMix;
+    ReverbBlobDisplay reverbBlob;
     KnobWithLabel limiterThresh, limiterRelease;
     juce::ToggleButton pingPongBtn { "Ping-Pong" };
 
