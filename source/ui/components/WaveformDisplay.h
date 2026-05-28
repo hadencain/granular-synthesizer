@@ -51,6 +51,7 @@ private:
     float dragCurrentNorm = 0.0f;
 
     std::unique_ptr<juce::FileChooser> fileChooser;
+    juce::TextButton replaceBtn { "REPLACE" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WaveformDisplay)
 };
