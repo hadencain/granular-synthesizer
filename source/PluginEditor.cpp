@@ -279,13 +279,14 @@ void PluginEditor::resized()
     const int footY = kBodyY + modH;
     modSection.setBounds(kMainW + pad, kBodyY + kSLH, kLfoColW - pad * 2, modH - kSLH - pad);
 
-    // GAIN slider (narrow vertical) + WET knob in LFO footer
-    const int gainW   = 36;
-    const int wetW    = 100;
+    // GAIN fader (horizontal) + WET knob in LFO footer
+    const int wetW    = 80;
     const int lblH    = 12;
-    const int sliderH = kLfoFootH - lblH - pad;
-    masterVolLabel.setBounds(kMainW + pad,               footY + pad,        gainW, lblH);
-    masterVolSlider.setBounds(kMainW + pad,              footY + pad + lblH, gainW, sliderH);
-    dryWetLabel.setBounds   (kMainW + pad * 2 + gainW,   footY + pad,        wetW,  lblH);
-    dryWetSlider.setBounds  (kMainW + pad * 2 + gainW,   footY + pad + lblH, wetW,  sliderH);
+    const int faderH  = 28;
+    const int gainW   = kLfoColW - wetW - pad * 3;
+    const int faderY  = footY + (kLfoFootH - faderH) / 2;
+    masterVolLabel.setBounds(kMainW + pad,               footY + 4,   gainW, lblH);
+    masterVolSlider.setBounds(kMainW + pad,              faderY,      gainW, faderH);
+    dryWetLabel.setBounds   (kMainW + pad * 2 + gainW,   footY + 4,   wetW,  lblH);
+    dryWetSlider.setBounds  (kMainW + pad * 2 + gainW,   footY + pad + lblH, wetW, kLfoFootH - pad - lblH - pad);
 }

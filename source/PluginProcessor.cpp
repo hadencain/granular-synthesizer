@@ -161,7 +161,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     layout.add(std::make_unique<P>("fx_limiter_release", "Limiter Release",   logRange(1.0f, 2000.0f, 100.0f), 100.0f, fMs));
 
     // --- Output ---
-    layout.add(std::make_unique<P>("master_volume_db",   "Master Volume",     expRange(-60.0f, 6.0f, 0.3f), 0.0f, fDb));
+    { auto r = juce::NormalisableRange<float>(-60.0f, 6.0f); r.setSkewForCentre(-12.0f);
+      layout.add(std::make_unique<P>("master_volume_db", "Master Volume", r, 0.0f, fDb)); }
     layout.add(std::make_unique<P>("dry_wet",            "Dry/Wet",           juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f, fPct));
     layout.add(std::make_unique<PB>("dc_filter",         "DC Filter",         true));
     layout.add(std::make_unique<PC>("anti_aliasing",     "Anti-Aliasing",     juce::StringArray{"Off","Low","High"}, 1));
