@@ -24,8 +24,7 @@ PluginEditor::PluginEditor(PluginProcessor& p)
       fxSection       (p.getAPVTS()),
       modSection      (p.getAPVTS(), p.getModMatrix()),
       waveformDisplay (p.getFormatManager()),
-      masterVolAtt    (p.getAPVTS(), "master_volume_db", masterVolSlider),
-      dryWetAtt       (p.getAPVTS(), "dry_wet",          dryWetSlider)
+      masterVolAtt    (p.getAPVTS(), "master_volume_db", masterVolSlider)
 {
     setLookAndFeel(&laf);
     setSize(kW, kH);
@@ -69,24 +68,11 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     masterVolLabel.setFont(juce::Font(9.0f, juce::Font::bold));
     masterVolLabel.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
 
-    dryWetLabel.setText("WET", juce::dontSendNotification);
-    dryWetLabel.setJustificationType(juce::Justification::centred);
-    dryWetLabel.setFont(juce::Font(9.0f, juce::Font::bold));
-    dryWetLabel.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
-
     masterVolSlider.setTextValueSuffix(" dB");
     masterVolSlider.setNumDecimalPlacesToDisplay(1);
-    dryWetSlider.textFromValueFunction = [](double v) -> juce::String {
-        return juce::String(juce::roundToInt(v * 100)) + "%";
-    };
-    dryWetSlider.valueFromTextFunction = [](const juce::String& t) -> double {
-        return t.trimCharactersAtEnd("%").getDoubleValue() / 100.0;
-    };
 
     addAndMakeVisible(masterVolSlider);
     addAndMakeVisible(masterVolLabel);
-    addAndMakeVisible(dryWetSlider);
-    addAndMakeVisible(dryWetLabel);
 
     waveformDisplay.onLoadFile = [&](const juce::File& file) {
         p.getGrainBuffer().loadFile(file, p.getFormatManager());
@@ -279,14 +265,11 @@ void PluginEditor::resized()
     const int footY = kBodyY + modH;
     modSection.setBounds(kMainW + pad, kBodyY + kSLH, kLfoColW - pad * 2, modH - kSLH - pad);
 
-    // GAIN fader (horizontal) + WET knob in LFO footer
-    const int wetW    = 80;
+    // GAIN fader — full footer width
     const int lblH    = 12;
-    const int faderH  = 28;
-    const int gainW   = kLfoColW - wetW - pad * 3;
-    const int faderY  = footY + (kLfoFootH - faderH) / 2;
-    masterVolLabel.setBounds(kMainW + pad,               footY + 4,   gainW, lblH);
-    masterVolSlider.setBounds(kMainW + pad,              faderY,      gainW, faderH);
-    dryWetLabel.setBounds   (kMainW + pad * 2 + gainW,   footY + 4,   wetW,  lblH);
-    dryWetSlider.setBounds  (kMainW + pad * 2 + gainW,   footY + pad + lblH, wetW, kLfoFootH - pad - lblH - pad);
+    const int faderH  = 40;
+    const int gainW   = kLfoColW - pad * 2;
+    const int faderY  = footY + (kLfoFootH - faderH - lblH - 4) / 2;
+    masterVolLabel.setBounds (kMainW + pad, faderY,           gainW, lblH);
+    masterVolSlider.setBounds(kMainW + pad, faderY + lblH + 4, gainW, faderH);
 }

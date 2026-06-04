@@ -51,8 +51,8 @@ void FilterCurveDisplay::rebuildPath()
 
     curvePath.clear();
 
-    constexpr double kLogMin = std::log10(20.0);
-    constexpr double kLogMax = std::log10(20000.0);
+    const double kLogMin = std::log10(20.0);
+    const double kLogMax = std::log10(20000.0);
 
     for (int i = 0; i < kNumPoints; ++i)
     {

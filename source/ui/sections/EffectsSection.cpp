@@ -92,12 +92,13 @@ void EffectsSection::resized()
     pingPongBtn.setBounds(x, y + kH / 2 - 12, 80, 24);
     y += kH + gap;
 
-    // Reverb — 3 knobs + blob to the right
+    // Reverb — 3 knobs row, then blob below spanning full width
     x = startX;
     for (auto* c : { &reverbRoom, &reverbDamp, &reverbMix })
     { c->setBounds(x, y, kW, kH); x += kW + gap; }
-    reverbBlob.setBounds(x, y + 4, 66, kH - 8);
     y += kH + gap;
+    reverbBlob.setBounds(startX, y, getWidth() - startX * 2, 48);
+    y += 48 + gap;
 
     // Limiter
     x = startX;

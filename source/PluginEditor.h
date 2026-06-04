@@ -49,13 +49,11 @@ private:
     EffectsSection     fxSection;
     ModSection         modSection;
 
-    // LFO column footer — master out knobs
+    // LFO column footer — master gain
     juce::Slider masterVolSlider { juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight };
     juce::Label  masterVolLabel;
-    juce::Slider dryWetSlider   { juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow };
-    juce::Label  dryWetLabel;
 
-    juce::AudioProcessorValueTreeState::SliderAttachment masterVolAtt, dryWetAtt;
+    juce::AudioProcessorValueTreeState::SliderAttachment masterVolAtt;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };
