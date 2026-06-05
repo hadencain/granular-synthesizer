@@ -3,6 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "../components/KnobWithLabel.h"
 #include "../components/ReverbBlobDisplay.h"
+#include "../components/EQCurveDisplay.h"
 
 class EffectsSection : public juce::Component
 {
@@ -15,9 +16,9 @@ private:
     KnobWithLabel drive;
     juce::ComboBox wsTypeBox; juce::Label wsLabel;
 
-    // EQ (4 bands, each: freq/gain/q)
-    struct EQBandKnobs { KnobWithLabel freq, gain, q; };
-    std::array<EQBandKnobs, 4> eq;
+    // EQ — interactive curve display; Q hidden sliders for DSP-only access
+    EQCurveDisplay eqDisplay;
+    std::array<juce::Slider, 4> eqQSliders;
 
     // Chorus / Delay / Reverb / Limiter
     KnobWithLabel chorusRate, chorusDepth, chorusMix;
@@ -28,6 +29,7 @@ private:
     juce::ToggleButton pingPongBtn { "Ping-Pong" };
 
     std::vector<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>> atts;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, 4> eqQAtts;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> wsTypeAtt;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   pingPongAtt;
 };

@@ -1,7 +1,8 @@
 #include "EffectsSection.h"
 
 EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
-    : reverbBlob(apvts)
+    : reverbBlob(apvts),
+      eqDisplay(apvts)
 {
     auto att = [&](KnobWithLabel& k, const juce::String& id) {
         atts.push_back(std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -13,20 +14,10 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
     wsTypeBox.addItemList({"Tanh", "Soft Clip"}, 1);
     wsTypeAtt = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, "fx_ws_type", wsTypeBox);
 
-    const juce::String eqNames[][3] = {
-        { "fx_eq1_freq","fx_eq1_gain","fx_eq1_q" },
-        { "fx_eq2_freq","fx_eq2_gain","fx_eq2_q" },
-        { "fx_eq3_freq","fx_eq3_gain","fx_eq3_q" },
-        { "fx_eq4_freq","fx_eq4_gain","fx_eq4_q" }
-    };
     for (int i = 0; i < 4; ++i)
     {
-        eq[i].freq.setLabel("EQ" + juce::String(i+1) + " F");
-        eq[i].gain.setLabel("Gain");
-        eq[i].q.setLabel("Q");
-        att(eq[i].freq, eqNames[i][0]);
-        att(eq[i].gain, eqNames[i][1]);
-        att(eq[i].q,    eqNames[i][2]);
+        eqQAtts[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+            apvts, "fx_eq" + juce::String(i + 1) + "_q", eqQSliders[i]);
     }
 
     chorusRate.setLabel("Rate");     att(chorusRate,    "fx_chorus_rate");
@@ -44,7 +35,7 @@ EffectsSection::EffectsSection(juce::AudioProcessorValueTreeState& apvts)
 
     addAndMakeVisible(drive);
     addAndMakeVisible(wsTypeBox); addAndMakeVisible(wsLabel);
-    for (auto& band : eq) { addAndMakeVisible(band.freq); addAndMakeVisible(band.gain); addAndMakeVisible(band.q); }
+    addAndMakeVisible(eqDisplay);
     for (auto* c : { &chorusRate, &chorusDepth, &chorusMix,
                      &delayTime, &delayFeedback, &delayMix,
                      &reverbRoom, &reverbDamp, &reverbMix,
@@ -65,19 +56,9 @@ void EffectsSection::resized()
     wsTypeBox.setBounds(startX + kW + gap, y + 16, 100, 22);
     y += kH + gap;
 
-    // EQ bands — 2 per row (each band: freq + gain + q)
-    // Row 1: bands 0,1  Row 2: bands 2,3
-    for (int row = 0; row < 2; ++row)
-    {
-        int x = startX;
-        for (int b = row * 2; b < row * 2 + 2; ++b)
-        {
-            eq[b].freq.setBounds(x, y, kW, kH); x += kW + 2;
-            eq[b].gain.setBounds(x, y, kW, kH); x += kW + 2;
-            eq[b].q.setBounds   (x, y, kW, kH); x += kW + gap + 4;
-        }
-        y += kH + gap;
-    }
+    // EQ curve display
+    eqDisplay.setBounds(startX, y, getWidth() - startX * 2, 80);
+    y += 80 + gap;
 
     // Chorus
     int x = startX;
