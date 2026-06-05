@@ -50,6 +50,9 @@ public:
     GranularSynth& getSynth()        noexcept { return synth; }
     juce::AudioFormatManager& getFormatManager() noexcept { return formatManager; }
 
+    // Per-target mod values written each block for UI display (raw [-1..+1] from modMatrix)
+    std::array<std::atomic<float>, static_cast<int>(ModTarget::COUNT)> modDisplayValues {};
+
     // Raw param pointers cached at prepareToPlay for zero-overhead audio-thread reads
     struct RawParams
     {

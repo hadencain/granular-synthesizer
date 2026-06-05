@@ -4,6 +4,7 @@ KnobWithLabel::KnobWithLabel()
 {
     addAndMakeVisible(slider);
     addAndMakeVisible(label);
+    slider.addListener(this);
 
     label.setJustificationType(juce::Justification::centred);
     label.setFont(juce::Font(9.5f, juce::Font::bold));
@@ -13,6 +14,17 @@ KnobWithLabel::KnobWithLabel()
     slider.setColour(juce::Slider::textBoxOutlineColourId,    juce::Colours::transparentBlack);
     slider.setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::transparentBlack);
     slider.setColour(juce::Slider::textBoxTextColourId,       juce::Colour(0xff909090));
+}
+
+KnobWithLabel::~KnobWithLabel()
+{
+    slider.removeListener(this);
+}
+
+void KnobWithLabel::pushModulatedValue(double nativeVal)
+{
+    if (userDragging) return;
+    slider.setValue(nativeVal, juce::dontSendNotification);
 }
 
 void KnobWithLabel::setLabel(const juce::String& text)

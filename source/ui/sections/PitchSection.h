@@ -10,8 +10,10 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    KnobWithLabel pitchShift, detune, playbackRate; // exposed for mod display
+
 private:
-    KnobWithLabel pitchShift, detune, pitchRandom, playbackRate, formantShift, glide;
+    KnobWithLabel pitchRandom, formantShift, glide;
     juce::ComboBox transposeBox, quantizeBox;
     juce::Label    transposeLabel, quantizeLabel;
 

@@ -10,9 +10,10 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    KnobWithLabel grainSize, grainDensity; // exposed for mod display
+
 private:
-    KnobWithLabel grainSize, grainDensity, grainOverlap, interonset,
-                  randomizeSize, randomizeDensity;
+    KnobWithLabel grainOverlap, interonset, randomizeSize, randomizeDensity;
     juce::ComboBox envelopeBox, directionBox;
     juce::Label    envelopeLabel, directionLabel;
 

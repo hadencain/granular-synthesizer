@@ -1,7 +1,9 @@
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
+#include "dsp/GranularParams.h"
 #include "ui/GranularLookAndFeel.h"
+#include "ui/components/KnobWithLabel.h"
 #include "ui/components/WaveformDisplay.h"
 #include "ui/components/GrainDotDisplay.h"
 #include "ui/sections/GrainCoreSection.h"
@@ -56,6 +58,18 @@ private:
     juce::Label  masterVolLabel;
 
     juce::AudioProcessorValueTreeState::SliderAttachment masterVolAtt;
+
+    struct ModKnobBinding
+    {
+        KnobWithLabel* knob;
+        const char*    paramId;  // APVTS param ID for the base value
+        ModTarget      target;
+        float          scale;    // mod [-1..+1] × scale = native-unit offset
+        float          min, max; // native-unit clamp range
+    };
+    std::vector<ModKnobBinding> modKnobs;
+
+    void updateModDisplay();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };

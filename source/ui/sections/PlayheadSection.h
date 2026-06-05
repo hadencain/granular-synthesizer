@@ -10,8 +10,10 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    KnobWithLabel position, spray, scanRate; // exposed for mod display
+
 private:
-    KnobWithLabel position, spray, scanRate, loopStart, loopEnd, scrub, prob;
+    KnobWithLabel loopStart, loopEnd, scrub, prob;
     juce::ComboBox  scanShapeBox;
     juce::Label     scanShapeLabel;
     juce::ToggleButton freezeBtn { "Freeze" };

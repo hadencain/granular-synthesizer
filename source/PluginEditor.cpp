@@ -75,7 +75,23 @@ PluginEditor::PluginEditor(PluginProcessor& p)
         p.getGrainBuffer().loadFile(file, p.getFormatManager());
     };
 
-    startTimerHz(10);
+    // Knob → ModTarget binding table. scale = native-unit range covered by a full ±1 mod.
+    modKnobs = {
+        { &grainSection.grainSize,    "grain_size_ms",   ModTarget::GrainSize,        500.0f,    1.0f,   500.0f  },
+        { &grainSection.grainDensity, "grain_density",   ModTarget::GrainDensity,     500.0f,    1.0f,   500.0f  },
+        { &playheadSection.position,  "position",        ModTarget::Position,           1.0f,    0.0f,     1.0f  },
+        { &playheadSection.spray,     "spray_ms",        ModTarget::Spray,            500.0f,    0.0f,   500.0f  },
+        { &playheadSection.scanRate,  "scan_rate_hz",    ModTarget::ScanRate,          10.0f,  0.001f,    10.0f  },
+        { &pitchSection.pitchShift,   "pitch_shift_st",  ModTarget::GrainPitch,        48.0f,  -48.0f,    48.0f  },
+        { &pitchSection.detune,       "detune_cents",    ModTarget::Detune,           100.0f, -100.0f,   100.0f  },
+        { &pitchSection.playbackRate, "playback_rate",   ModTarget::PlaybackRate,       3.99f,  0.01f,     4.0f  },
+        { &ampSection.amplitude,      "amplitude",       ModTarget::GrainAmplitude,     1.0f,   0.0f,     1.0f  },
+        { &spatialSection.pan,        "pan",             ModTarget::GrainPan,           1.0f,  -1.0f,     1.0f  },
+        { &filterSection.cutoff,      "filter_cutoff_hz",ModTarget::FilterCutoff,  20000.0f,   20.0f, 20000.0f  },
+        { &filterSection.resonance,   "filter_resonance",ModTarget::FilterResonance,   40.0f,   0.1f,    40.0f  },
+    };
+
+    startTimerHz(30);
 }
 
 PluginEditor::~PluginEditor()
@@ -93,6 +109,33 @@ void PluginEditor::timerCallback()
     const int bufLen = static_cast<int>(processor.getGrainBuffer().getTotalLengthSamples());
     processor.getSynth().collectGrainPositions(positions, bufLen);
     waveformDisplay.setGrainPositions(positions);
+
+    updateModDisplay();
+}
+
+void PluginEditor::updateModDisplay()
+{
+    auto& apvts = processor.getAPVTS();
+
+    for (const auto& b : modKnobs)
+    {
+        const float mod = processor.modDisplayValues[static_cast<int>(b.target)].load();
+
+        auto* param = dynamic_cast<juce::RangedAudioParameter*>(apvts.getParameter(b.paramId));
+        if (param == nullptr) continue;
+
+        const float base = param->getNormalisableRange().convertFrom0to1(param->getValue());
+
+        if (std::abs(mod) < 0.001f)
+        {
+            // No active modulation — restore knob to base APVTS value
+            b.knob->pushModulatedValue(static_cast<double>(base));
+            continue;
+        }
+
+        const float modulated = juce::jlimit(b.min, b.max, base + mod * b.scale);
+        b.knob->pushModulatedValue(static_cast<double>(modulated));
+    }
 }
 
 void PluginEditor::mouseDown(const juce::MouseEvent& e)

@@ -11,8 +11,10 @@ public:
     void resized() override;
     void paintOverChildren(juce::Graphics& g) override;
 
+    KnobWithLabel pan; // exposed for mod display
+
 private:
-    KnobWithLabel pan, panRandom, stereoWidth, voiceDetune;
+    KnobWithLabel panRandom, stereoWidth, voiceDetune;
     juce::Slider  voicesSlider { juce::Slider::LinearHorizontal, juce::Slider::NoTextBox };
     juce::Label   voicesLabel;
 

@@ -10,9 +10,10 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    KnobWithLabel amplitude; // exposed for mod display
+
 private:
-    KnobWithLabel amplitude, ampRandom, velSens, crossfade,
-                  attack, decay, sustain, release;
+    KnobWithLabel ampRandom, velSens, crossfade, attack, decay, sustain, release;
 
     juce::AudioProcessorValueTreeState::SliderAttachment
         ampAtt, randAtt, velAtt, xfadeAtt, atkAtt, decAtt, susAtt, relAtt;

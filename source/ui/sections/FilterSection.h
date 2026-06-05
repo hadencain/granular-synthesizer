@@ -11,10 +11,12 @@ public:
     void paint(juce::Graphics& g) override;
     void resized() override;
 
+    KnobWithLabel cutoff, resonance; // exposed for mod display
+
 private:
     FilterCurveDisplay curveDisplay;
 
-    KnobWithLabel cutoff, resonance, envDepth, lfoDepth, keytrack;
+    KnobWithLabel envDepth, lfoDepth, keytrack;
     juce::ComboBox filterTypeBox;
     juce::Label    filterTypeLabel;
 

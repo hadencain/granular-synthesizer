@@ -51,11 +51,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     VT layout;
 
     // --- Grain Core ---
-    layout.add(std::make_unique<P>("grain_size_ms",      "Grain Size",        logRange(1.0f, 500.0f, 50.0f),   80.0f,  fMs));
-    layout.add(std::make_unique<P>("grain_density",      "Grain Density",     logRange(1.0f, 500.0f, 50.0f),   40.0f,  fHz));
+    layout.add(std::make_unique<P>("grain_size_ms",      "Grain Size",        logRange(1.0f, 500.0f, 50.0f),   250.0f, fMs));
+    layout.add(std::make_unique<P>("grain_density",      "Grain Density",     logRange(1.0f, 500.0f, 50.0f),    6.0f,  fHz));
     layout.add(std::make_unique<PC>("grain_envelope",    "Grain Envelope",    juce::StringArray{"Hann","Gaussian","Trapezoid","Rectangle","Triangular","Tukey"}, 0));
-    layout.add(std::make_unique<P>("grain_overlap",      "Grain Overlap",     juce::NormalisableRange<float>(0.0f, 1.0f), 0.5f, fPct));
-    layout.add(std::make_unique<P>("interonset_ms",      "Interonset Time",   logRange(1.0f, 1000.0f, 50.0f),  25.0f,  fMs));
+    layout.add(std::make_unique<P>("grain_overlap",      "Grain Overlap",     juce::NormalisableRange<float>(0.0f, 1.0f), 0.25f, fPct));
+    layout.add(std::make_unique<P>("interonset_ms",      "Interonset Time",   logRange(1.0f, 1000.0f, 50.0f),  150.0f, fMs));
     layout.add(std::make_unique<PC>("grain_direction",   "Grain Direction",   juce::StringArray{"Forward","Reverse","Bidirectional","Random"}, 0));
     layout.add(std::make_unique<P>("randomize_size_ms",  "Randomize Size",    juce::NormalisableRange<float>(0.0f, 250.0f), 0.0f, fMs));
     layout.add(std::make_unique<P>("randomize_density",  "Randomize Density", juce::NormalisableRange<float>(0.0f, 200.0f), 0.0f, fHz));
@@ -64,7 +64,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     // --- Playhead ---
     layout.add(std::make_unique<P>("position",           "Position",          juce::NormalisableRange<float>(0.0f, 1.0f), 0.0f, fPct));
     layout.add(std::make_unique<P>("spray_ms",           "Spray",             juce::NormalisableRange<float>(0.0f, 500.0f), 0.0f, fMs));
-    layout.add(std::make_unique<P>("scan_rate_hz",       "Scan Rate",         logRange(0.001f, 10.0f, 0.3f),   0.1f,   fHz2));
+    layout.add(std::make_unique<P>("scan_rate_hz",       "Scan Rate",         logRange(0.001f, 10.0f, 0.3f),   0.001f, fHz2));
     layout.add(std::make_unique<PC>("scan_shape",        "Scan Shape",        juce::StringArray{"Forward","Reverse","Pendulum","Random Walk","Sine"}, 0));
     layout.add(std::make_unique<P>("loop_start",         "Loop Start",        juce::NormalisableRange<float>(0.0f, 0.99f), 0.0f, fPct));
     layout.add(std::make_unique<P>("loop_end",           "Loop End",          juce::NormalisableRange<float>(0.01f, 1.0f), 1.0f, fPct));
@@ -84,10 +84,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     // --- Amplitude ---
     layout.add(std::make_unique<P>("amplitude",          "Amplitude",         expRange(0.0f, 1.0f, 0.25f),     1.0f,   fAmp));
     layout.add(std::make_unique<P>("amp_random_db",      "Amp Random",        juce::NormalisableRange<float>(0.0f, 18.0f), 0.0f, fDb));
-    layout.add(std::make_unique<P>("adsr_attack_ms",     "Attack",            logRange(0.0f, 5000.0f, 100.0f), 10.0f,  fMs));
+    layout.add(std::make_unique<P>("adsr_attack_ms",     "Attack",            logRange(0.0f, 5000.0f, 100.0f),  5.0f,  fMs));
     layout.add(std::make_unique<P>("adsr_decay_ms",      "Decay",             logRange(0.0f, 5000.0f, 200.0f), 100.0f, fMs));
-    layout.add(std::make_unique<P>("adsr_sustain",       "Sustain",           juce::NormalisableRange<float>(0.0f, 1.0f), 0.8f, fPct));
-    layout.add(std::make_unique<P>("adsr_release_ms",    "Release",           logRange(0.0f, 10000.0f, 500.0f), 500.0f, fMs));
+    layout.add(std::make_unique<P>("adsr_sustain",       "Sustain",           juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f, fPct));
+    layout.add(std::make_unique<P>("adsr_release_ms",    "Release",           logRange(0.0f, 10000.0f, 500.0f), 150.0f, fMs));
     layout.add(std::make_unique<P>("velocity_sensitivity","Velocity Sens",    juce::NormalisableRange<float>(0.0f, 1.0f), 1.0f, fPct));
     layout.add(std::make_unique<P>("crossfade_ms",       "Crossfade",         juce::NormalisableRange<float>(0.0f, 50.0f), 5.0f, fMs));
 
@@ -400,6 +400,10 @@ GranularParams PluginProcessor::buildParamSnapshot()
     p.modScanRate        = modMatrix.evaluate(ModTarget::ScanRate);
     p.modFilterCutoff    = modMatrix.evaluate(ModTarget::FilterCutoff);
     p.modFilterResonance = modMatrix.evaluate(ModTarget::FilterResonance);
+
+    // Write all mod values for UI display
+    for (int i = 0; i < static_cast<int>(ModTarget::COUNT); ++i)
+        modDisplayValues[i].store(modMatrix.evaluate(static_cast<ModTarget>(i)));
 
     return p;
 }
