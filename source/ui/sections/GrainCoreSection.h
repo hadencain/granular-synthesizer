@@ -7,6 +7,7 @@ class GrainCoreSection : public juce::Component
 {
 public:
     explicit GrainCoreSection(juce::AudioProcessorValueTreeState& apvts);
+    void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:

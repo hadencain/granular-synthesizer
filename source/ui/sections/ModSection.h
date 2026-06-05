@@ -8,6 +8,7 @@ class ModSection : public juce::Component
 {
 public:
     ModSection(juce::AudioProcessorValueTreeState& apvts, ModMatrix& modMatrix);
+    void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:

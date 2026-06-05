@@ -7,6 +7,7 @@ class SpatialSection : public juce::Component
 {
 public:
     explicit SpatialSection(juce::AudioProcessorValueTreeState& apvts);
+    void paint(juce::Graphics& g) override;
     void resized() override;
     void paintOverChildren(juce::Graphics& g) override;
 

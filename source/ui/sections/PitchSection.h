@@ -7,6 +7,7 @@ class PitchSection : public juce::Component
 {
 public:
     explicit PitchSection(juce::AudioProcessorValueTreeState& apvts);
+    void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:

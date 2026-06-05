@@ -35,9 +35,16 @@ GrainCoreSection::GrainCoreSection(juce::AudioProcessorValueTreeState& apvts)
     addAndMakeVisible(directionLabel);
 }
 
+void GrainCoreSection::paint(juce::Graphics& g)
+{
+    g.setColour(juce::Colour(0xff555555));
+    g.setFont(juce::Font(7.5f, juce::Font::bold));
+    g.drawText("GRAIN CORE", 8, 2, getWidth() - 16, 11, juce::Justification::centredLeft);
+}
+
 void GrainCoreSection::resized()
 {
-    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 8;
+    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 18;
     const int row2Y = startY + kH + gap;
     const int row3Y = row2Y + kH + gap;
 

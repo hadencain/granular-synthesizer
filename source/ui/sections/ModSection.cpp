@@ -125,9 +125,16 @@ ModSection::ModSection(juce::AudioProcessorValueTreeState& apvts, ModMatrix& mod
     addAndMakeVisible(viewport);
 }
 
+void ModSection::paint(juce::Graphics& g)
+{
+    g.setColour(juce::Colour(0xff555555));
+    g.setFont(juce::Font(7.5f, juce::Font::bold));
+    g.drawText("MODULATION", 8, 2, getWidth() - 16, 11, juce::Justification::centredLeft);
+}
+
 void ModSection::resized()
 {
-    viewport.setBounds(getLocalBounds());
+    viewport.setBounds(getLocalBounds().withTrimmedTop(14));
 
     const int w         = getWidth() - 16;
     const int stripH    = 110;

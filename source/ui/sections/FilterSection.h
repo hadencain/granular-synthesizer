@@ -8,6 +8,7 @@ class FilterSection : public juce::Component
 {
 public:
     explicit FilterSection(juce::AudioProcessorValueTreeState& apvts);
+    void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:

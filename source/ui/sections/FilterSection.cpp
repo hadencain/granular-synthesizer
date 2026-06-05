@@ -26,9 +26,16 @@ FilterSection::FilterSection(juce::AudioProcessorValueTreeState& apvts)
     addAndMakeVisible(filterTypeLabel);
 }
 
+void FilterSection::paint(juce::Graphics& g)
+{
+    g.setColour(juce::Colour(0xff555555));
+    g.setFont(juce::Font(7.5f, juce::Font::bold));
+    g.drawText("FILTER", 8, 2, getWidth() - 16, 11, juce::Justification::centredLeft);
+}
+
 void FilterSection::resized()
 {
-    const int kW = 70, kH = 72, gap = 6, startX = 8, startY = 6;
+    const int kW = 70, kH = 72, gap = 6, startX = 8, startY = 16;
     const int fullW = getWidth() - startX * 2;
 
     // Frequency response curve

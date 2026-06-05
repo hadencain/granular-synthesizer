@@ -7,6 +7,7 @@ class BufferSection : public juce::Component
 {
 public:
     explicit BufferSection(juce::AudioProcessorValueTreeState& apvts);
+    void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:

@@ -20,9 +20,16 @@ SpatialSection::SpatialSection(juce::AudioProcessorValueTreeState& apvts)
     voicesSlider.onValueChange = [this] { repaint(); };
 }
 
+void SpatialSection::paint(juce::Graphics& g)
+{
+    g.setColour(juce::Colour(0xff555555));
+    g.setFont(juce::Font(7.5f, juce::Font::bold));
+    g.drawText("SPATIAL", 8, 2, getWidth() - 16, 11, juce::Justification::centredLeft);
+}
+
 void SpatialSection::resized()
 {
-    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 8;
+    const int kW = 70, kH = 82, gap = 8, startX = 8, startY = 16;
     int x = startX;
     for (auto* c : { &pan, &panRandom, &stereoWidth })
     { c->setBounds(x, startY, kW, kH); x += kW + gap; }
