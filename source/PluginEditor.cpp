@@ -177,7 +177,32 @@ void PluginEditor::paint(juce::Graphics& g)
 
     const auto hairline = GranularLookAndFeel::textSecondary.withAlpha(0.18f);
 
-    // Horizontal dividers
+    // Section background fills — subtle steps darker left→right
+    const int grainH  = static_cast<int>(kBodyH * 0.50f);
+    const int pitchH  = kBodyH / 2;
+    const int spaceH  = static_cast<int>(kBodyH * 0.22f);
+    const int filterH = static_cast<int>(kBodyH * 0.50f);
+    const int bufferH = kBodyH - spaceH - filterH;
+
+    struct SectionFill { int x, y, w, h; juce::Colour bg; };
+    const SectionFill fills[] = {
+        { 0,         kBodyY,                          kColW,    grainH,            juce::Colour(0xff181818) }, // Grain Core
+        { 0,         kBodyY + grainH,                 kColW,    kBodyH - grainH,   juce::Colour(0xff161616) }, // Playhead
+        { kColW,     kBodyY,                          kColW,    pitchH,            juce::Colour(0xff151515) }, // Pitch
+        { kColW,     kBodyY + pitchH,                 kColW,    kBodyH - pitchH,   juce::Colour(0xff131313) }, // Amplitude
+        { kColW * 2, kBodyY,                          kColW,    spaceH,            juce::Colour(0xff171717) }, // Spatial
+        { kColW * 2, kBodyY + spaceH,                 kColW,    filterH,           juce::Colour(0xff141414) }, // Filter
+        { kColW * 2, kBodyY + spaceH + filterH,       kColW,    bufferH,           juce::Colour(0xff121212) }, // Buffer
+        { kColW * 3, kBodyY,                          kColW,    kBodyH,            juce::Colour(0xff111111) }, // Effects
+        { kMainW,    kBodyY,                          kLfoColW, kBodyH,            juce::Colour(0xff0f0f0f) }, // Modulation
+    };
+    for (const auto& f : fills)
+    {
+        g.setColour(f.bg);
+        g.fillRect(f.x, f.y, f.w, f.h);
+    }
+
+    // Horizontal dividers (drawn on top of fills)
     g.setColour(hairline);
     g.drawHorizontalLine(kHeaderH, 0.0f, static_cast<float>(kW));
     g.drawHorizontalLine(kBodyY,   0.0f, static_cast<float>(kW));
@@ -193,30 +218,23 @@ void PluginEditor::paint(juce::Graphics& g)
     g.drawHorizontalLine(kBodyY + kBodyH - kLfoFootH,
                          static_cast<float>(kMainW), static_cast<float>(kW));
 
-    // Section color bars — 2px left edge of each section
-    const int grainH  = static_cast<int>(kBodyH * 0.50f);
-    const int pitchH  = kBodyH / 2;
-    const int spaceH  = static_cast<int>(kBodyH * 0.22f);
-    const int filterH = static_cast<int>(kBodyH * 0.50f);
-    const int bufferH = kBodyH - spaceH - filterH;
-    const int fxH     = kBodyH;
-
+    // Section left-edge bars — 3px, stepped greys (drawn on top of fills)
     struct Bar { int x, y, h; juce::Colour colour; };
     const Bar bars[] = {
-        { 0,         kBodyY,                       grainH,          juce::Colour(0xff3c3c3c) }, // Grain Core
-        { 0,         kBodyY + grainH,              kBodyH - grainH, juce::Colour(0xff363636) }, // Playhead
-        { kColW,     kBodyY,                       pitchH,          juce::Colour(0xff323232) }, // Pitch
-        { kColW,     kBodyY + pitchH,              kBodyH - pitchH, juce::Colour(0xff2e2e2e) }, // Amplitude
-        { kColW * 2, kBodyY,                       spaceH,          juce::Colour(0xff2a2a2a) }, // Spatial
-        { kColW * 2, kBodyY + spaceH,              filterH,         juce::Colour(0xff262626) }, // Filter
-        { kColW * 2, kBodyY + spaceH + filterH,    bufferH,         juce::Colour(0xff232323) }, // Buffer
-        { kColW * 3, kBodyY,                       fxH,             juce::Colour(0xff202020) }, // Effects
-        { kMainW,    kBodyY,                       kBodyH,          juce::Colour(0xff1e1e1e) }, // Modulation
+        { 0,         kBodyY,                          grainH,            juce::Colour(0xff404040) }, // Grain Core
+        { 0,         kBodyY + grainH,                 kBodyH - grainH,   juce::Colour(0xff383838) }, // Playhead
+        { kColW,     kBodyY,                          pitchH,            juce::Colour(0xff353535) }, // Pitch
+        { kColW,     kBodyY + pitchH,                 kBodyH - pitchH,   juce::Colour(0xff303030) }, // Amplitude
+        { kColW * 2, kBodyY,                          spaceH,            juce::Colour(0xff2d2d2d) }, // Spatial
+        { kColW * 2, kBodyY + spaceH,                 filterH,           juce::Colour(0xff292929) }, // Filter
+        { kColW * 2, kBodyY + spaceH + filterH,       bufferH,           juce::Colour(0xff252525) }, // Buffer
+        { kColW * 3, kBodyY,                          kBodyH,            juce::Colour(0xff222222) }, // Effects
+        { kMainW,    kBodyY,                          kBodyH,            juce::Colour(0xff1e1e1e) }, // Modulation
     };
     for (const auto& bar : bars)
     {
         g.setColour(bar.colour);
-        g.fillRect(bar.x, bar.y, 2, bar.h);
+        g.fillRect(bar.x, bar.y, 3, bar.h);
     }
 }
 
