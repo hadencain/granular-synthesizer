@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "ui/GranularLookAndFeel.h"
 #include "ui/components/WaveformDisplay.h"
+#include "ui/components/GrainDotDisplay.h"
 #include "ui/sections/GrainCoreSection.h"
 #include "ui/sections/PlayheadSection.h"
 #include "ui/sections/PitchSection.h"
@@ -32,7 +33,8 @@ private:
     GranularLookAndFeel laf;
 
     // Header
-    juce::Label      titleLabel, grainCountLabel;
+    juce::Label      titleLabel;
+    GrainDotDisplay  grainDotDisplay;
     juce::TextButton startBtn, stopBtn;
 
     // Waveform strip

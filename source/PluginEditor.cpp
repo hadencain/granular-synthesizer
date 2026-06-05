@@ -36,10 +36,7 @@ PluginEditor::PluginEditor(PluginProcessor& p)
     titleLabel.addMouseListener(this, false);
     addAndMakeVisible(titleLabel);
 
-    grainCountLabel.setFont(juce::Font(10.0f));
-    grainCountLabel.setColour(juce::Label::textColourId, GranularLookAndFeel::textSecondary);
-    grainCountLabel.setJustificationType(juce::Justification::centredRight);
-    addAndMakeVisible(grainCountLabel);
+    addAndMakeVisible(grainDotDisplay);
 
     startBtn.setButtonText("START");
     startBtn.onClick = [this]() { processor.getSynth().noteOn(1, 60, 0.8f); };
@@ -90,8 +87,7 @@ PluginEditor::~PluginEditor()
 void PluginEditor::timerCallback()
 {
     const int n = processor.getSynth().getTotalActiveGrains();
-    grainCountLabel.setText("grains  " + juce::String(n),
-                             juce::dontSendNotification);
+    grainDotDisplay.setActiveCount(n);
 
     juce::Array<float> positions;
     const int bufLen = static_cast<int>(processor.getGrainBuffer().getTotalLengthSamples());
@@ -247,7 +243,7 @@ void PluginEditor::resized()
     titleLabel.setBounds(16, 0, 250, kHeaderH);
     startBtn.setBounds(278, 8, 62, 28);
     stopBtn.setBounds (344, 8, 62, 28);
-    grainCountLabel.setBounds(kMainW - 130, 0, 120, kHeaderH);
+    grainDotDisplay.setBounds(kMainW - 58, 0, 50, kHeaderH);
 
     // Waveform strip (cols 1–4, inset)
     waveformDisplay.setBounds(pad, kHeaderH + pad,
