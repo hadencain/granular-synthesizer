@@ -5,7 +5,7 @@ ModMatrixGrid::ModMatrixGrid(ModMatrix& m) : modMatrix(m)
     addAndMakeVisible(table);
 
     table.setModel(this);
-    table.setColour(juce::ListBox::backgroundColourId, juce::Colour(0xff1a1a2e));
+    table.setColour(juce::ListBox::backgroundColourId, juce::Colour(0xff141414));
     table.setRowHeight(24);
     table.setMultipleSelectionEnabled(false);
 
@@ -30,11 +30,11 @@ int ModMatrixGrid::getNumRows()
 void ModMatrixGrid::paintRowBackground(juce::Graphics& g, int row, int w, int h, bool selected)
 {
     if (selected)
-        g.fillAll(juce::Colour(0xff00d4ff).withAlpha(0.15f));
+        g.fillAll(juce::Colours::white.withAlpha(0.08f));
     else if (row % 2 == 0)
-        g.fillAll(juce::Colour(0xff16213e));
+        g.fillAll(juce::Colour(0xff161616));
     else
-        g.fillAll(juce::Colour(0xff1a1a2e));
+        g.fillAll(juce::Colour(0xff141414));
 }
 
 void ModMatrixGrid::paintCell(juce::Graphics& g, int row, int col, int w, int h, bool)
